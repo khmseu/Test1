@@ -3,3 +3,7 @@
 /bin/
 /.shards/
 *.dwarf
+Session.vim
+*.lock
+Test1
+mist
