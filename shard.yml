@@ -1,0 +1,13 @@
+name: Test1
+version: 0.1.0
+
+authors:
+  - Kai Henningsen <kai.extern+git@gmail.com>
+
+targets:
+  Test1:
+    main: src/Test1.cr
+
+crystal: 0.25.1
+
+license: MIT
