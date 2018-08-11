@@ -1,0 +1,333 @@
+// $Id: CATS_Events.proto 8875 2016-09-14 07:59:48Z kai $
+
+// AppPBX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "EventsProto";
+
+import "CATS_Support.proto";
+
+package EventMessages;
+
+enum EventKind {
+    DeviceChange   = 1;
+    CallChange     = 2;
+    FeatureChange  = 3;
+    WServerEvent   = 4; // not sent, internal use only
+};
+
+message WantEvents {
+    required EventKind		Kind = 1;
+    required bool			want = 2;
+};
+
+// Untertypen siehe unten
+message Event {
+    required EventKind               Kind                    =  1;
+    repeated uint32                  ChangedFields           =  2;
+    optional string                  latestTrigger           =  3; // for debugging ONLY
+
+    optional int64                   CallSeq                 = 10;
+    optional Support.Device          DeviceID                = 11;
+    optional Support.ConnectionState LocalConnectionState    = 12;
+    optional EventType               LastEvent               = 13;
+    optional EventCause              EventCause              = 14;
+    optional string                  StateTime               = 15;
+    optional bool                    IsOriginator            = 16;
+    optional int64                   ThreadSeq               = 17; // no longer sent, look in DB
+    optional Support.Device          callingDevice           = 18;
+    optional Support.Device          calledDevice            = 19;
+    repeated string                  UserAttrs               = 20;
+    repeated int64                   OldCallSeqs             = 21;
+    optional int32                   CallsOnThisDevice       = 22;
+    optional int32                   DevicesInThisCall       = 23;
+    optional int64                   SegmentSeq              = 24;
+    //                               reserved                  25
+    //                               reserved                  26
+    optional string                  connectionStart         = 27;
+    optional string                  connectionEnd           = 28;
+    optional int64                   connectionDuration      = 29; // Sekunden
+    optional ReasonForTerm           reasonForTerm           = 30;
+    optional EventType               createEvent             = 31;
+    optional EventCause              createCause             = 32;
+    optional EventType               closeEvent              = 33;
+    optional EventCause              closeCause              = 34;
+    repeated Support.ConnectionState states                  = 35;
+    repeated Support.Device          devices                 = 36;
+    optional CallState               callState               = 37;
+    repeated Support.ForwardStateOut forwardState            = 38;
+    optional Support.Device          AssociatedDeviceID      = 39;
+    optional Support.Device          associatedCalledDevice  = 40;
+    optional Support.Device          associatedCallingDevice = 41;
+    repeated Support.Device          associated              = 42;
+};
+
+// Enum-Werte können sich noch ändern!
+enum EventType {
+    et_bridged                      =  1;
+    et_callCleared                  =  2;
+    et_conferenced                  =  3;
+    et_connectionCleared            =  4;
+    et_delivered                    =  5;
+    et_digitsDialed                 =  6;
+    et_diverted                     =  7;
+    et_established                  =  8;
+    et_failed                       =  9;
+    et_held                         = 10;
+    et_networkCapabilitiesChanged   = 11;
+    et_networkReached               = 12;
+    et_offered                      = 13;
+    et_originated                   = 14;
+    et_queued                       = 15;
+    et_retrieved                    = 16;
+    et_serviceInitiated             = 17;
+    et_transferred                  = 18;
+    et_callInformation              = 19;
+    et_charging                     = 20;
+    et_digitsGeneratedEvent         = 21;
+    et_telephonyTonesGeneratedEvent = 22;
+    et_serviceCompletionFailure     = 23;
+    et_mediaAttached                = 24;
+    et_mediaDetached                = 25;
+    et_buttonInformation            = 26;
+    et_buttonPress                  = 27;
+    et_displayUpdated               = 28;
+    et_hookswitch                   = 29;
+    et_lampMode                     = 30;
+    et_messageWaiting               = 31;
+    et_microphoneGain               = 32;
+    et_microphoneMute               = 33;
+    et_ringerStatus                 = 34;
+    et_speakerMute                  = 35;
+    et_speakerVolume                = 36;
+    et_agentBusy                    = 37;
+    et_agentLoggedOn                = 38;
+    et_agentLoggedOff               = 39;
+    et_agentNotReady                = 40;
+    et_agentReady                   = 41;
+    et_agentWorkingAfterCall        = 42;
+    et_autoAnswer                   = 43;
+    et_autoWorkMode                 = 44;
+    et_callBack                     = 45;
+    et_callBackMessage              = 46;
+    et_callerIDStatus               = 47;
+    et_doNotDisturb                 = 48;
+    et_forwarding                   = 49;
+    et_routeingMode                 = 50;
+    et_backInService                = 51;
+    et_deviceCapabilityChanged      = 52;
+    et_outOfService                 = 53;
+    et_play                         = 54;
+    et_record                       = 55;
+    et_review                       = 56;
+    et_stop                         = 57;
+    et_suspendPlay                  = 58;
+    et_suspendRecord                = 59;
+    et_voiceAttributesChange        = 60;
+    et_privateEvent                 = 61;
+    et_snapshotDevice               = 62;
+    et_snapshotCall                 = 63;
+    et_errorMessage                 = 64;
+    et_presenceState                = 65;
+    et_partiallyInService           = 66;
+    et_bookmarkReached              = 67;
+    et_completed                    = 68;
+    et_dTMFDetected                 = 69;
+    et_emptied                      = 70;
+    et_interruptionDetected         = 71;
+    et_notRecognized                = 72;
+    et_recognized                   = 73;
+    et_silenceTimeoutExpired        = 74;
+    et_speechDetected               = 75;
+    et_started                      = 76;
+    et_voiceErrorOccurred           = 77;
+};
+
+enum EventCause {
+    ec_aCDBusy                               =   1;
+    ec_aCDForward                            =   2;
+    ec_aCDSaturated                          =   3;
+    ec_activeParticipation                   =   4;
+    ec_alertTimeExpired                      =   5;
+    ec_alternate                             =   6;
+    ec_autoWork                              =   7;
+    ec_blocked                               =   8;
+    ec_busy                                  =   9;
+    ec_callBack                              =  10;
+    ec_callCancelled                         =  11;
+    ec_callForward                           =  12;
+    ec_callForwardImmediate                  =  13;
+    ec_callForwardBusy                       =  14;
+    ec_callForwardNoAnswer                   =  15;
+    ec_callNotAnswered                       =  16;
+    ec_callPickup                            =  17;
+    ec_campOn                                =  18;
+    ec_campOnTrunks                          =  19;
+    ec_characterCountReached                 =  20;
+    ec_conference                            =  21;
+    ec_consultation                          =  22;
+    ec_destDetected                          =  23;
+    ec_destNotObtainable                     =  24;
+    ec_destOutOfOrder                        =  25;
+    ec_distributed                           =  26;
+    ec_distributionDelay                     =  27;
+    ec_doNotDisturb                          =  28;
+    ec_dTMFDigitDetected                     =  29;
+    ec_durationExceeded                      =  30;
+    ec_endOfMessageDetected                  =  31;
+    ec_enteringDistribution                  =  32;
+    ec_forcedPause                           =  33;
+    ec_forcedTransition                      =  34;
+    ec_incompatibleDestination               =  35;
+    ec_intrude                               =  36;
+    ec_invalidAccountCode                    =  37;
+    ec_invalidNumberFormat                   =  38;
+    ec_joinCall                              =  39;
+    ec_keyOperation                          =  40;
+    ec_keyOperationInUse                     =  41;
+    ec_lockout                               =  42;
+    ec_maintenance                           =  43;
+    ec_makeCall                              =  44;
+    ec_makePredictiveCall                    =  45;
+    ec_messageDurationExceeded               =  46;
+    ec_messageSizeExceeded                   =  47;
+    ec_multipleAlerting                      =  48;
+    ec_multipleQueuing                       =  49;
+    ec_networkCongestion                     =  50;
+    ec_networkDialling                       =  51;
+    ec_networkNotObtainable                  =  52;
+    ec_networkOutOfOrder                     =  53;
+    ec_networkSignal                         =  54;
+    ec_newCall                               =  55;
+    ec_nextMessage                           =  56;
+    ec_noAvailableAgents                     =  57;
+    ec_normal                                =  58;
+    ec_normalClearing                        =  59;
+    ec_noSpeechDetected                      =  60;
+    ec_notAvaliableBearerService             =  61;
+    ec_notSupportedBearerService             =  62;
+    ec_numberChanged                         =  63;
+    ec_numberUnallocated                     =  64;
+    ec_overflow                              =  65;
+    ec_override                              =  66;
+    ec_park                                  =  67;
+    ec_queueCleared                          =  68;
+    ec_recall                                =  69;
+    ec_redirected                            =  70;
+    ec_remainsInQueue                        =  71;
+    ec_reorderTone                           =  72;
+    ec_reserved                              =  73;
+    ec_resourcesNotAvailable                 =  74;
+    ec_selectedTrunkBusy                     =  75;
+    ec_silentParticipation                   =  76;
+    ec_singleStepConference                  =  77;
+    ec_singleStepTransfer                    =  78;
+    ec_speechDetected                        =  79;
+    ec_suspend                               =  80;
+    ec_switchingFunctionTerminated           =  81;
+    ec_terminationCharacterReceived          =  82;
+    ec_timeout                               =  83;
+    ec_transfer                              =  84;
+    ec_trunksBusy                            =  85;
+    ec_unauthorisedBearerService             =  86;
+    ec_voiceUnitInitiator                    =  87;
+    ec_activation                            =  88;
+    ec_babble                                =  89;
+    ec_badAttribute                          =  90;
+    ec_badGrammar                            =  91;
+    ec_badVoice                              =  92;
+    ec_badUri                                =  93;
+    ec_busyOverflow                          =  94;
+    ec_calendarOverflow                      =  95;
+    ec_callInterception                      =  96;
+    ec_callInterceptionBusy                  =  97;
+    ec_callInterceptionForwarded             =  98;
+    ec_callInterceptionNoAnswer              =  99;
+    ec_callInterceptionResourcesNotAvailable = 100;
+    ec_capacityOverflow                      = 101;
+    ec_duplicateDTMF                         = 102;
+    ec_earlyStop                             = 103;
+    ec_emptyQueue                            = 104;
+    ec_interDigitTimeout                     = 105;
+    ec_invalidConnection                     = 106;
+    ec_invalidConnectionState                = 107;
+    ec_lawfulInterception                    = 108;
+    ec_makeConnection                        = 109;
+    ec_maxTimeout                            = 110;
+    ec_noAudioSaved                          = 111;
+    ec_noQueue                               = 112;
+    ec_noRule                                = 113;
+    ec_outOfGrammar                          = 114;
+    ec_pathReplacement                       = 115;
+    ec_queueTimeOverflow                     = 116;
+    ec_recallBusy                            = 117;
+    ec_recallForwarded                       = 118;
+    ec_recallNoAnswer                        = 119;
+    ec_recallResourcesNotAvailable           = 120;
+    ec_unknownOverflow                       = 121;
+};
+
+enum ReasonForTerm {
+    rft_normalClearing          = 1;
+    rft_unsuccessfulCallAttempt = 2;
+    rft_abnormalTermination     = 3;
+    rft_callTransferred         = 4;
+    rft_other                   = 5;
+}
+
+enum CallState {
+    cs_Unknown     = 0; // unrecognized
+    cs_Null        = 1; // null-*
+    cs_Initiated   = 2; // initiated-*
+    cs_Connecting  = 3; // [connect,hold,queued]-[null,initiated]
+    cs_Delivered   = 4; // alerting-*
+    cs_Received    = 5; // [connect,hold,queued]-alerting
+    cs_Established = 6; // [connect,hold,queued]-[connect,hold,queued]
+    cs_Failed      = 7; // failed-[^null]
+    cs_Blocked     = 8; // failed-null
+};
+
+// PBXManager (internal messages used by AppScriptHost)
+message PBXManagerEvent {
+    enum t_cd {
+        cd_Unknown  = 0;
+        cd_Incoming = 2;
+        cd_Outgoing = 3;
+    };
+    enum t_ac {
+        ac_Unknown    =  0;
+        ac_Special    =  1;
+        ac_Accounting =  2;
+        ac_Start      =  3;
+        ac_End        =  4;
+        ac_Conference =  5;
+        ac_Transfer   =  6;
+        ac_Dial       =  7;
+        ac_Ring       =  8;
+        ac_Busy       =  9;
+        ac_Connect    = 10;
+        ac_Drop       = 11;
+        ac_Hold       = 12;
+        ac_Retrieve   = 13;
+    };
+    enum t_at {
+        at_Unknown = 0;
+        at_Caller  = 2;
+        at_Callee  = 3;
+    };
+    optional int64          call      =  1;
+    optional EventCause     eventCase =  2;
+    optional string         source    =  3;
+    optional bool           reverse   =  4;
+    optional int64          evtnum    =  5;
+    optional string         evtstmp   =  6;
+    optional t_cd           dir       =  7;
+    optional t_ac           action    =  8;
+    optional t_at           ab        =  9;
+    optional Support.Device nst       = 10;
+    optional Support.Device num       = 11;
+    optional Support.Device vnst      = 12;
+}

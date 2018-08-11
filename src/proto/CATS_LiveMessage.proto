@@ -1,0 +1,83 @@
+// $Id: CATS_LiveMessage.proto 8875 2016-09-14 07:59:48Z kai $
+
+// AppLiveMessenger
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "LiveMessageProto";
+
+import "CATS_Helper.proto";
+
+message LiveMessage {
+    required int32    			message_type		= 1;
+
+    optional MessageFromTo 		message_from_to		= 2;					//UserA sendet Message zur UserB. Message from User to ChatApp
+    optional UserStatus 	    user_status_change 	= 3;					//an UserA wird erteilt über status von UserB
+    optional SetMyStatus 		set_my_status		= 4;					//UserB setz sein Status
+    optional AddUser 			add_user			= 5;					//User fügt im eingene Liste neuen User
+    repeated UserStatus 		user_status_init	= 6;					//Informationen über Users
+    optional GetChatHistory		get_chat_history	= 7;
+    optional ChatHistory		chat_history		= 8;
+    optional GetUserPresence	get_user_presence	= 9;
+}
+
+message MessageFromTo {
+    optional string sender 	 	 = 1;										//von ChatApp wird gefült
+    optional string receiver 	 = 2;										//von sender wird gefült. kann sein dass von ChatApp gelöscht wird
+    //optional string sender_extension = 3;									//von ChatApp wird gefült <- wird nicht mehr verwendet.
+    optional string message_text = 4;										//message selber
+    optional string timestamp    = 5;
+}
+
+enum enStatus {
+    offline = 1;		//XMPP - unavailable
+    online  = 2;		//XMPP - available
+    busy    = 3;		//XMPP - dnd -- The entity or resource is busy (dnd = "Do Not Disturb")
+    away    = 4;		//XMPP - away -- The entity or resource is temporarily away
+    exAway	= 5;		//The entity or resource is away for an extended period (xa = "eXtended Away").  (bin für unbestimte Zeit abwesend)
+}
+
+message SetMyStatus {
+    required enStatus set_status = 2;
+    optional string my_full_name = 3;
+}
+
+message AddUser {
+    required string user_name = 1;
+}
+
+message UserStatus {
+    required string user_name 		= 1;
+    required enStatus user_status 	= 2;
+    optional string extension		= 3;
+    optional string extension_full	= 5;
+    optional string user_full_name  = 4;
+}
+
+message GetChatHistory {
+    required string chat_partner		= 1;
+    optional RequestMask request_mask	= 2;
+}
+
+enum MSG_Direction {
+    msgIN  = 1;
+    msgOUT = 2;
+}
+
+message HistoryMessage {
+    optional string sender					= 1;
+    optional MSG_Direction	direction	 	= 2;
+    optional string timestamp    			= 3;
+    optional string message_text 			= 4;
+}
+
+message ChatHistory {
+    required string chat_partner		= 1;
+    repeated HistoryMessage	messages	= 2;
+}
+
+message GetUserPresence {
+    optional bool presence = 1;				//feld wird nicht benutzt
+}

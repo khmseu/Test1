@@ -1,0 +1,90 @@
+// $Id: CATS_Logical_Device_Feature_Services.proto 8875 2016-09-14 07:59:48Z kai $
+
+// AppPBX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "LogicalDeviceProto";
+
+import "CATS_Helper.proto";
+import "CATS_Support.proto";
+
+package LogDevFeatureMessages;
+
+message LogDevFeature {
+    required int32                    ld_command                  =   1;
+    optional QueryMyExtensionArgument query_my_extension_argument =   2;
+    optional QueryMyExtensionResult   query_my_extension_result   =   3;
+    optional SetAgentStateArgument    set_agent_state_argument    =   4;
+    optional SetAgentStateResult      set_agent_state_result      =   5;
+    optional GetForwardingArgument    get_forwarding_argument     =   6;
+    optional GetForwardingResult      get_forwarding_result       =   7;
+    optional SetForwardingArgument    set_forwarding_argument     =   8;
+    optional SetForwardingResult      set_forwarding_result       =   9;
+    optional QueryDeviceListArgument  query_device_list_argument  = 100;
+    optional QueryDeviceListResult    query_device_list_result    = 101;
+}
+
+message QueryMyExtensionArgument {
+    optional string base_device = 1;
+}
+
+message QueryMyExtensionResult {
+    optional Support.Device    extension  = 1;
+    optional Support.Device    agent      = 2;
+    repeated Attribute other_info = 3;
+}
+
+
+message SetAgentStateArgument {
+    optional string     device                = 1;
+    optional AgentState requested_agent_state = 2;
+    optional string     agent_id              = 3;
+    optional string     password              = 4;
+    optional string     group                 = 5;
+    optional bool       auto_work_on          = 6;
+    optional string     auto_work_interval    = 7; // Format: "23:59:59.000"
+}
+
+message SetAgentStateResult {
+    optional AgentState pending_agent_state = 1;
+}
+
+enum AgentState {
+    as_null             = 0;
+    as_loggedOn         = 1;
+    as_loggedOff        = 2;
+    as_notReady         = 3;
+    as_ready            = 4;
+    as_busy             = 5;
+    as_workingAfterCall = 6;
+};
+
+message GetForwardingArgument {
+    optional string base_device = 1;
+};
+
+message GetForwardingResult {
+    repeated Support.ForwardStateOut forward_list = 1;
+};
+
+message SetForwardingArgument {
+    optional string                 base_device = 1;
+    optional Support.ForwardStateIn new_state   = 2;
+};
+
+message SetForwardingResult {
+};
+
+message QueryDeviceListArgument {
+    optional string base_device = 2;
+    optional bool   fromLC      = 3;
+    optional bool   toLC        = 4;
+    repeated string device_list = 1;
+};
+
+message QueryDeviceListResult {
+    repeated Support.Device device_list = 1;
+};

@@ -1,0 +1,176 @@
+//$Id: PL_NG.proto 8878 2016-09-14 09:33:39Z kai $
+
+// AppExtStatus
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "PLNGProto";
+
+import "CATS_Helper.proto";
+
+package PLng;
+
+message PLngAppMsg {
+    oneof message_type {
+        // Optimierung
+        Batch        batch         = 1;
+
+        // Antwort App -> Client
+        Image        image         = 2;
+
+        // Message App -> Client
+        GroupReset   group_reset   = 3;
+        GroupChange  group_change  = 4;
+        DeviceChange device_change = 5;
+        CallChange   call_change   = 6;
+        QueueChange  queue_change  = 7;
+    }
+}
+
+message PLngCltMsg {
+    oneof message_type {
+        // Message Client -> App
+        GroupSelect  group_select  = 1;
+        ImageLoad    image_load    = 2;
+        DeviceSearch device_search = 3;
+
+        // Antwort Client -> App
+    }
+}
+
+// Optimierung, wenn diverse Messages gleichzeitig anfallen
+// Messages im batch dürfen nicht selbst ein batch sein
+message Batch {
+    repeated PLngAppMsg sub_msg = 2;
+}
+
+enum ChangeKind {
+    add    = 1;
+    del    = 2;
+    update = 3;
+}
+
+// alle Gruppen löschen (zB nach Reconnect)
+message GroupReset {
+    required string my_id = 1;
+}
+
+// Gruppe hinzufügen, löschen, oder Liste der Devices ändern
+// Group id '*' = my Device
+// searchGroupName = "search_group";
+// operatorGroupName = "operator_group";
+message GroupChange {
+    required ChangeKind kind      = 1;
+    required string     id        = 2;
+    optional string     name      = 3;
+    optional bool       is_custom = 4 [default = false];
+    optional bool       is_extern = 5 [default = false];
+    repeated string     devices   = 6; // <device>.device.id
+}
+
+// Suche in der Such-Gruppe
+message DeviceSearch {
+    required string search_term = 1;
+}
+
+// aktuell ausgewählte Gruppe
+// (Devices in nicht ausgewählte Gruppen werden nicht notwendigerweise aktualisiert)
+message GroupSelect {
+    required string group = 1; // <group>.id
+}
+
+// Anforderung eines Bildes
+message ImageLoad {
+    required int32 id = 1;
+}
+
+// Bilder-Benutzungs-Regeln
+message ImageMapping {
+    required string     target              = 1;
+    optional string     target_type         = 2;
+    optional string     date_time_created   = 3;
+    required int32      image               = 4;
+}
+
+// Auslieferung eines Bildes
+message Image {
+    required int32  id                = 1;
+    optional bytes  image             = 2;
+    optional string date_time_created = 3;
+}
+
+// Basis-Daten Device
+message DeviceChange {
+    required ChangeKind        kind            = 1;
+    required DeviceDescription device          = 2; //Ext 123
+    optional string            agent_full_name = 3;
+    repeated Forwarding        forwarding      = 4;
+}
+
+// Daten zu einem Anruf
+message CallInfo {
+    enum RelationToCall {
+        Active   = 1;
+        Knocking = 2;
+        Held     = 3;
+    }
+
+    enum CallDirection {
+        dirInt     = 0;
+        dirExtIn   = 1;
+        dirExtOut  = 2;
+        dirUnknown = 3;
+    }
+    required int64             callID             =  1;
+    required RelationToCall    relation           =  2;
+    optional CallDirection     callDirection      =  3;
+    optional int32             connect_duration   =  4;
+    optional int32             parked_time        =  5;
+    optional SupportedSpecials supported_specials =  6;
+    optional CATSDataSet       data_set           =  7;
+    optional string            caller_name        =  8; //generierter oder aufgelöster Name
+    optional string            caller_number      =  9;
+    optional DeviceDescription vnst               = 10;
+    repeated ImageMapping      images             = 11;
+}
+
+// Device-Daten zu aktuellem Anruf
+message CallChange {
+    enum DeviceStateEnum {
+        ring      = 0;
+        dial      = 1;
+        connected = 2;
+        busy      = 4;
+        free      = 5;
+        unknown   = 6;
+    }
+    required string          device  = 1; // <device>.device.id
+    required DeviceStateEnum state   = 2;
+    optional CallInfo        current = 3;
+    repeated CallInfo        queue   = 4;
+}
+
+// Für Operator: Parking/WaitingQueue
+message QueueChange {
+    enum Kind {
+        parking = 1;
+        qaiting = 2;
+    }
+    required Kind     kind  = 1;
+    repeated CallInfo queue = 2;
+}
+
+// message DeviceDescription {
+    //     enum DeviceType {
+        //         PBXext = 0;
+        //         mobile = 1;
+        //         phone  = 2;
+        //     }
+    //     required string device_id       = 1;
+    //     optional string device_id_full  = 5;                       //Ext Full +49251322311123
+    //     required DeviceType device_type = 2;
+    //     optional string device_name     = 3;
+    //     optional string device_comment  = 4;
+    // }

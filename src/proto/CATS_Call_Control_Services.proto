@@ -1,0 +1,318 @@
+// $Id: CATS_Call_Control_Services.proto 8875 2016-09-14 07:59:48Z kai $
+
+// AppPBX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "CallControlProto";
+
+import "CATS_Support.proto";
+
+package CallControlMessages;
+
+message CallControl {
+    required int32                      cc_command                    =  1;
+    // Accept                                                            2
+    //                                                                   3
+    optional AlternateCallArgument      alternate_call_argument       =  4;
+    optional AlternateCallResult        alternate_call_result         =  5;
+    optional AnswerCallArgument         answer_call_argument          =  6;
+    optional AnswerCallResult           answer_call_result            =  7;
+    optional CallBackArgument           call_back_argument            =  8;
+    optional CallBackResult             call_back_result              =  9;
+    optional CallBackMessageArgument    call_back_message_argument    = 10;
+    optional CallBackMessageResult      call_back_message_result      = 11;
+    optional CampOnCallArgument         camp_on_call_argument         = 12;
+    optional CampOnCallResult           camp_on_call_result           = 13;
+    optional ClearCallArgument          clear_call_argument           = 14;
+    optional ClearCallResult            clear_call_result             = 15;
+    optional ClearConnectionArgument    clear_connection_argument     = 16;
+    optional ClearConnectionResult      clear_connection_result       = 17;
+    optional ConferenceCallArgument     conference_call_argument      = 18;
+    optional ConferenceCallResult       conference_call_result        = 19;
+    optional ConsultationCallArgument   consultation_call_argument    = 20;
+    optional ConsultationCallResult     consultation_call_result      = 21;
+    optional DeflectCallArgument        deflect_call_argument         = 22;
+    optional DeflectCallResult          deflect_call_result           = 23;
+    // Dial Digits                                                      24
+    //                                                                  25
+    optional DirectedPickupCallArgument directed_pickup_call_argument = 26;
+    optional DirectedPickupCallResult   directed_pickup_call_result   = 27;
+    optional GroupPickupCallArgument    group_pickup_call_argument    = 28;
+    optional GroupPickupCallResult      group_pickup_call_result      = 29;
+    optional HoldCallArgument           hold_call_argument            = 30;
+    optional HoldCallResult             hold_call_result              = 31;
+    optional IntrudeCallArgument        intrude_call_argument         = 32;
+    optional IntrudeCallResult          intrude_call_result           = 33;
+    optional JoinCallArgument           join_call_argument            = 34;
+    optional JoinCallResult             join_call_result              = 35;
+    optional MakeCallArgument           make_call_argument            = 36;
+    optional MakeCallResult             make_call_result              = 37;
+    // Make Predictive Call                                             38
+    //                                                                  39
+    optional ParkCallArgument           park_call_argument            = 40;
+    optional ParkCallResult             park_call_result              = 41;
+    optional ReconnectCallArgument      reconnect_call_argument       = 42;
+    optional ReconnectCallResult        reconnect_call_result         = 43;
+    optional RetrieveCallArgument       retrieve_call_argument        = 44;
+    optional RetrieveCallResult         retrieve_call_result          = 45;
+    optional SingleStepConfArgument     single_step_conf_argument     = 46;
+    optional SingleStepConfResult       single_step_conf_result       = 47;
+    optional SingleStepTransArgument    single_step_trans_argument    = 48;
+    optional SingleStepTransResult      single_step_trans_result      = 49;
+    optional TransferCallArgument       transfer_call_argument        = 50;
+    optional TransferCallResult         transfer_call_result          = 51;
+}
+
+
+message NewCallOptions {
+    optional string account_code            = 1; // Projekt
+    optional string auth_code               = 2;
+    optional bool   auto_originate          = 3;
+    // ab hier nicht in CSTA
+    optional string line_access_code        = 4; // Leitung oder CLIP
+    optional bool   as_transfer             = 5; // Vermitteln statt normal wählen?
+}
+
+
+message AlternateCallArgument {
+    optional string base_device = 1;
+    optional int64  held_call   = 2;
+    optional int64  active_call = 3;
+}
+
+message AlternateCallResult {
+    // nix
+}
+
+
+message AnswerCallArgument {
+    optional string base_device         = 1;
+    optional int64  call_to_be_answered = 2;
+}
+
+message AnswerCallResult {
+    // nix
+}
+
+
+message CallBackArgument {
+    optional string base_device         = 1;
+    optional int64  callback_connection = 2;
+}
+
+message CallBackResult {
+    optional Support.Device target_device = 1;
+}
+
+
+message CallBackMessageArgument {
+    optional string base_device                 = 1;
+    optional int64  callback_message_connection = 2;
+}
+
+message CallBackMessageResult {
+    optional Support.Device target_device = 1;
+}
+
+
+message CampOnCallArgument {
+    optional string base_device       = 1;
+    optional int64  campon_connection = 2;
+}
+
+message CampOnCallResult {
+    // nix
+}
+
+
+message ClearCallArgument {
+    optional string base_device        = 1;
+    optional int64  call_to_be_cleared = 2;
+}
+
+message ClearCallResult {
+    // nix
+}
+
+
+message ClearConnectionArgument {
+    optional string base_device              = 1;
+    optional int64  connection_to_be_cleared = 2;
+}
+
+message ClearConnectionResult {
+    // nix
+}
+
+
+message ConferenceCallArgument {
+    optional string base_device = 1;
+    optional int64  held_call   = 2;
+    optional int64  active_call = 3;
+}
+
+message ConferenceCallResult {
+    optional int64  conference_call = 1;
+    repeated Support.Device connections     = 2;
+}
+
+
+message ConsultationCallArgument {
+    optional string         base_device      = 1;
+    optional int64          existing_call    = 2;
+    optional string         consulted_device = 3;
+    optional NewCallOptions options          = 4;
+}
+
+message ConsultationCallResult {
+    optional int64 initiated_call = 1;
+}
+
+
+message DeflectCallArgument {
+    optional string base_device         = 1;
+    optional int64  call_to_be_diverted = 2;
+    optional string new_destination     = 3;
+}
+
+message DeflectCallResult {
+    // nix
+}
+
+
+message DirectedPickupCallArgument {
+    optional string base_device          = 1;
+    optional int64  call_to_be_picked_up = 2;
+    optional string requesting_device    = 3;
+}
+
+message DirectedPickupCallResult {
+    optional int64 picked_call = 1;
+}
+
+
+message GroupPickupCallArgument {
+    optional string base_device     = 1;
+    optional string new_destination = 2;
+    optional string pick_group      = 3;
+}
+
+message GroupPickupCallResult {
+    optional int64 picked_call = 1;
+}
+
+
+message HoldCallArgument {
+    optional string base_device     = 1;
+    optional int64  call_to_be_held = 2;
+}
+
+message HoldCallResult {
+    // nix
+}
+
+
+message IntrudeCallArgument {
+    optional string base_device = 1;
+    optional int64  intrude     = 2;
+}
+
+message IntrudeCallResult {
+    optional int64 conferenced_call = 1;
+}
+
+
+message JoinCallArgument {
+    optional string         base_device    = 1;
+    optional int64          active_call    = 2;
+    optional string         joining_device = 3;
+    optional NewCallOptions options        = 4;
+}
+
+message JoinCallResult {
+    optional int64 conferenced_call = 1;
+}
+
+
+message MakeCallArgument {
+    required string         calling_device          = 1;
+    required string         called_directory_number = 2;
+    optional NewCallOptions options                 = 3;
+}
+
+message MakeCallResult {
+    optional int64 calling_device = 1;
+}
+
+
+message ParkCallArgument {
+    optional string base_device = 1;
+    optional int64  parking     = 2;
+    optional string park_to     = 3;
+}
+
+message ParkCallResult {
+    optional Support.Device parked_to = 1;
+}
+
+
+message ReconnectCallArgument {
+    optional string base_device = 1;
+    optional int64  active_call = 2;
+    optional int64  held_call   = 3;
+}
+
+message ReconnectCallResult {
+    // nix
+}
+
+
+message RetrieveCallArgument {
+    optional string base_device          = 1;
+    optional int64  call_to_be_retrieved = 2;
+}
+
+message RetrieveCallResult {
+    // nix
+}
+
+
+message SingleStepConfArgument {
+    optional string         base_device    = 1;
+    optional int64          active_call    = 2;
+    optional string         device_to_join = 3;
+    optional NewCallOptions options        = 4;
+}
+
+message SingleStepConfResult {
+    optional int64 conferenced_call = 1;
+}
+
+
+message SingleStepTransArgument {
+    optional string         base_device    = 1;
+    optional int64          active_call    = 2;
+    optional string         transferred_to = 3;
+    optional NewCallOptions options        = 4;
+}
+
+message SingleStepTransResult {
+    optional int64  transferred_call = 1;
+    repeated Support.Device connections      = 2;
+}
+
+
+message TransferCallArgument {
+    optional string base_device = 1;
+    optional int64  held_call   = 2;
+    optional int64  active_call = 3;
+}
+
+message TransferCallResult {
+    optional int64  transferred_call = 1;
+    repeated Support.Device connections      = 2;
+}
+

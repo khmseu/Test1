@@ -1,0 +1,121 @@
+// $Id: CATS_Journal.proto 8875 2016-09-14 07:59:48Z kai $
+
+// AppCallJournal
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "JournalProto";
+
+import "CATS_Helper.proto";
+
+message CallJournal {
+    required int32 actionCommand                           = 1;
+    repeated CallInfo callInfo                             = 2;
+    optional ResultSearchCalls result_search_calls         = 3;
+    optional DataScript create_script                      = 4;
+    optional RequestCalls request_calls                    = 6;
+    optional RequestSearchCalls request_search_calls       = 7;
+    optional AddCallNotice add_callnotice                  = 8;
+    optional DeviceDescription my_device                   = 9;
+    optional UpdateAdditionalFields updateAdditionalFields = 10;
+    optional ReadAdditionalFields readAdditionalFields     = 11;
+}
+
+
+// Beinhaltet Anruf-Informationen.
+message CallInfo {
+    enum CallState {
+        stateRing      = 0;
+        stateConnected = 1;
+        stateFinished  = 2;
+    }
+
+    enum CallDirection {
+        dirInt     = 0;
+        dirExtIn   = 1;
+        dirExtOut  = 2;
+    }
+
+    enum CallSuccess {
+        sucUnknown = 0;
+        sucOk      = 1;
+        sucFail    = 2;
+    }
+
+    required int64 callID                   = 1;
+
+    // Anrufstatus, Richtung, Erfolg
+    optional CallState     callState		= 2;
+    optional CallDirection callDirection	= 3;
+    optional CallSuccess   callSuccess		= 4;
+
+    // Anruferinfos
+    optional string otherNumber     = 5;
+    optional string otherNumberNice = 20;
+    optional string otherNumberNational = 22; // Nationale Nummern-Darstellung
+    optional string otherName		= 6;
+    optional string thisNumber      = 7;
+    optional string thisNumberNice  = 21;
+    optional string thisNumberNational = 23; // Nationale Nummern-Darstellung
+    optional string thisName        = 8;
+
+    optional string vExtension      = 9;
+    optional string vExtensionName  = 10;
+    optional string date_time_start = 11;                 // Zeitzone UTC-0 "yyyy-MM-dd HH:mm:ss"
+    optional string call_duration   = 13;                 // Format "hh:mm:ss"
+    optional string date_time_end   = 14;                 // Zeitzone UTC-0 "yyyy-MM-dd HH:mm:ss"
+
+    optional CATSCallTechInfo callTech = 12;             // Technische Infos
+
+    optional string additional1 = 15;
+    optional string additional2 = 16;
+    optional string additional3 = 17;
+    optional string additional4 = 18;
+    optional string additional5 = 19;
+
+    optional CATSDataSet data_set   = 50;
+    optional SupportedSpecials supported_specials = 51;
+    optional string call_notice		= 52;
+}
+
+message RequestCalls {
+    optional bool liveCalls = 1;                 // Wenn wahr, liefern Echtzeitevents an, die nach dem Anliefern der alten Calls anfallen.
+}
+
+message RequestSearchCalls {
+    optional RequestMask request_mask = 1;
+    optional string caller_name   = 2;
+    optional string caller_number = 3;
+    optional string ext_number    = 4;
+    optional string agent_name    = 5;
+}
+
+message ResultSearchCalls {
+    repeated CallInfo calls = 1;
+}
+
+message AddCallNotice {
+    required int64 callID       = 1;
+    optional string call_notice = 2;
+}
+
+message UpdateAdditionalFields {
+    required int64 callID         = 1;
+    optional string additional1 = 2;
+    optional string additional2 = 3;
+    optional string additional3 = 4;
+    optional string additional4 = 5;
+    optional string additional5 = 6;
+}
+
+message ReadAdditionalFields {
+    required int64 callID         = 1;
+    optional string additional1 = 2;
+    optional string additional2 = 3;
+    optional string additional3 = 4;
+    optional string additional4 = 5;
+    optional string additional5 = 6;
+}
+

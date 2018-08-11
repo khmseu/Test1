@@ -1,0 +1,128 @@
+// $Id: CATS_Support.proto 8875 2016-09-14 07:59:48Z kai $
+
+// AppPBX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "SupportProto";
+
+import "google/protobuf/descriptor.proto";
+
+package Support;
+
+extend google.protobuf.FieldOptions {
+    optional string notKnown = 50000;
+}
+
+// ACD
+// Group
+// Network Interface (i.e., trunk)
+// Park
+// Routeing
+// Station (default)
+// Voice Unit
+// Generic Interactive Voice
+// Listener Interactive Voice
+// DTMF Interactive Voice
+// Prompt Interactive Voice
+// Prompt Queue Interactive Voice
+// Message Interactive Voice
+// Conference
+// Other
+enum DeviceCategory {
+    dc_acd                         =  0;
+    dc_group                       =  1;
+    dc_networkInterface            =  2;
+    dc_park                        =  3;
+    dc_routeingDevice              =  4;
+    dc_station                     =  5;
+    dc_voiceUnit                   =  6;
+    dc_interactiveVoiceGeneric     =  8;
+    dc_interactiveVoiceListener    =  9;
+    dc_interactiveVoiceDTMF        = 10;
+    dc_interactiveVoicePrompt      = 11;
+    dc_interactiveVoicePromptQueue = 12;
+    dc_interactiveVoiceMessage     = 13;
+    dc_conference                  = 14;
+    dc_other                       =  7;
+};
+
+// ACD
+// Hunt
+// Pick
+// User
+// Agent
+// Other
+enum GroupDeviceAttributes {
+    gda_acd   = 0;
+    gda_hunt  = 1;
+    gda_pick  = 2;
+    gda_user  = 4;
+    gda_agent = 5;
+    gda_other = 3;
+};
+message Device {
+    required string                i = 1 [(notKnown) = "+*1234567890#"]; // Internationales Format
+    // use notKnown like this:
+    // #include <CATS_Support.pb.h>
+    // #include <google/protobuf/descriptor.h>
+    // const string Device_notKnown(Support::Device::descriptor()->FindFieldByName("i")->options().GetExtension(Support::notKnown));
+    // if (xxx->i() == Device_notKnown) ...
+    required string                u = 2; // User-Format laut PrefixDB.Translate.Name == 'Global.Intl<->User'
+    required bool                  e = 3; // Nebenstelle laut PrefixDB.Translate.P_isExt
+    optional DeviceCategory        c = 4;
+    repeated GroupDeviceAttributes g = 5;
+};
+
+message ForwardStateIn {
+    optional ForwardingType forwarding_type  = 1;
+    required bool           activate_forward = 2;
+    optional string         forward_to       = 3;
+    // reserved		forward_default    4
+    optional int32          ring_count       = 5; // 1 .. 100
+};
+message ForwardStateOut {
+    optional ForwardingType forwarding_type  = 1;
+    required bool           activate_forward = 2;
+    optional Device         forward_to       = 3;
+    optional ForwardDefault forward_default  = 4;
+    optional int32          ring_count       = 5; // 1 .. 100
+};
+
+message ForwardingType {
+    required ForwardingWhen forwarding_when = 1;
+    required ForwardingWhat forwarding_what = 2;
+};
+enum ForwardingWhen {
+    forwardImmediate = 0;
+    forwardBusy      = 1;
+    forwardNoAns     = 2;
+    forwardDND       = 3;
+};
+enum ForwardingWhat {
+    forwardAll = 0;
+    forwardInt = 1;
+    forwardExt = 2;
+};
+
+message ForwardDefault {
+    required bool forwardingType = 1;
+    required bool forwardDN      = 2;
+};
+
+enum ConnectionState {
+    cs_null                         =  1;
+    cs_initiated                    =  2;
+    cs_alerting                     =  3;
+    cs_connected                    =  4;
+    cs_hold                         =  5;
+    cs_queued                       =  6;
+    cs_fail                         =  7;
+};
+
+message CSTA_IID {
+    optional string pbxname = 1;
+    optional int64  ref     = 2;
+};

@@ -1,0 +1,241 @@
+// $Id: CATS_Helper.proto 8875 2016-09-14 07:59:48Z kai $
+
+// Generisch
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "HelperProto";
+
+message RequestHeader {
+    required int32 message_type = 1; // Tag der Message (Extension-Nummer)
+    required int32 conn_id      = 2; // Logische Verbindung (vom Connector-Prozeß vergeben)
+    // should be: repeated int32 conn_id      = 2; // Logische Verbindung (vom Connector-Prozess vergeben; mehrere bedeutet Broadcast)
+    optional int32 request_id   = 3; // zur freien Verwendung bei Anforderungen, wird in die Antwort kopiert falls vorhanden
+    optional bool continue_req  = 4; // Continue Request: Es folgen noch weitere Pakete für diese Request ID
+}
+
+enum ErrorKind {
+    ekOK             =  0; // Befehl erfolgreich verarbeitet.
+    ekBrokenConn     =  1; // Logische Verbindung zur Gegenseite ist ausgefallen (Verbindung zum Anwendungsserver wurde unterbrochen).
+    ekNoSuchConn     =  2; // Es existiert keine logische Verbindung zur angegebenen Verbindungs-ID.
+    ekBrokenCTILink  =  3; // Verbindung zum CATS-Server ist ausgefallen.
+    ekBrokenDBLink   =  4; // Verbindung zur Datenbankanwendung ist ausgefallen.
+    ekNoSuchApp      =  5; // Es existiert keine Anwendung mit dem angegebenen Namen.
+    ekNoSuchRecord   =  6; // Es konnte kein Datensatz gefunden werden. ///(wenn AppAdressresolution im Daten bank kein DatenSatz gefunden hat)
+    ekNoSuchSpecial  =  7; // Das angegebene Special/Befehl ist dem Anwendungsserver nicht bekannt.
+    ekTimeOut        =  8; // Der Server brauchte zu lange, um den Befehl zu verarbeiten (Timeout).
+    ekAppOffline     =  9; // ApplicationProcess mit mit dem angegebenen Namen ist zur Zeit offline.
+    ekPBXTimeOut     = 10; // Timeout auf der Verbindung AppPBX<->Telefonanlage
+    ekPBXError       = 11; // Telefonanlage meldet Fehler
+    ekAppPBXError    = 12; // AppPBX meldet Fehler
+
+    // Fehler ab hier werden erst von Clients ab Version 3.2.0.0 verarbeitet!
+    ekNoSuchClient   = 13; // Client existiert im System nicht (das melden die alten Apps!)
+
+    ekNoSuchMachine  = 14; // Machinename existiert im System nicht (vvv genauere Meldungen, welche Werte nicht konfiguriert sind (neuere Apps ab 20.06.2013) vvv)
+    ekNoSuchDialExt  = 15; // Wahlnebenstelle existiert im System nicht
+    ekNoSuchUser     = 16; // User existiert im System nicht
+    ekNoSuchMailbox  = 17; // Mailbox existiert im System nicht
+
+    ekClientOutdated = 18; // Die empfohlene Client-Version ist zu alt.
+    ekInformation    = 19; // Generische Nachricht, um Meldungen im Client anzuzeigen (zb. dass die Server-Apps neu gestartet werden oä.)
+
+    // mehr ...
+    ekLCResult0      = 100; // RESULT 0 vom LineClient (AppMUX)
+    ekBadParams      = 101; // es waren keinen gültigen Daten für Dial/Hangup/... übergeben.
+    ekBadAnswer      = 102; // Falsche Reaktion auf Special von CATSServer
+    ekChatMSNoSend   = 103; // Chatmessage war zur Chat partner nicht zugestehlt
+    // Interna
+    ekLocalTimer    = 400; // a QTimer::timeout(), description = QTimer::name
+}
+
+message ErrorId {
+    required ErrorKind errnum      = 1; // Fehlernummer
+    required string    description = 2; // einfache Beschreibung
+    repeated Attribute attributes  = 3; // Zusatzinformationen
+}
+
+message KeepAlive {
+    enum KeepAliveType {
+        are_you_there = 1;
+        i_am_here     = 2;
+    }
+
+    required KeepAliveType request = 1;
+    optional string name = 2;
+}
+
+message Attribute { // für Name-Wert Paare
+    required string a_name  = 1;
+    required string a_value = 2;
+}
+
+message Version {
+    required int32  v_major      = 1;
+    required int32  v_minor      = 2;
+    optional int32  v_build      = 3;
+    optional int32  v_revision   = 4;
+    optional string build_time   = 5;
+    required string name         = 6;
+    optional string more_info    = 7;
+    required string current_time = 8; // aktuelle Zeit
+    optional string start_time   = 9; // Wann die App gestartet wurde, wichtig für den Server Monitor
+}
+
+
+message CATSDataSet {
+    optional string adr_id            = 1;       // adrid
+    optional string name              = 2;       // fxname
+    optional string name2             = 3;       // fxname2
+    optional string tel               = 4;       // fxtel
+    optional string contact_person    = 5;       // fxasp
+    optional string street            = 6;       // fxstr
+    optional string city_code         = 7;       // fxplz
+    optional string city              = 8;       // fxort
+    optional string country           = 9;       //
+    optional string countrycode       = 10;      //
+    optional string email             = 11;      // fxemail
+    optional string fax_nr            = 12;      //
+    optional string additional        = 13;      // fxzus
+
+    optional string application       = 30;      // fxanw
+    optional string mandator          = 31;      // fxmand
+    optional string file              = 32;      // fxdatei
+    optional string adr               = 33;      // fxadr
+
+    optional string user1             = 40;      // fxusr1
+    optional string user2             = 41;      // fxusr1
+    optional string res1              = 42;      // fxres1
+    optional string res2              = 43;      // fxres2
+    optional string additional1       = 44;      // fx_zusatz1
+    optional string additional2       = 45;      // fx_zusatz2
+    optional string additional3       = 46;      // fx_zusatz3
+    optional string additional4       = 47;      // fx_zusatz4
+
+    //generierte felder
+    optional string name_generated    = 50;      // generierter Name, wenn nur Kopfnummer aufgelöst wurde.
+    optional string tel_ext           = 51;      // wenn nur Kopfnummer aufgelöst wurde: Durchwahl
+    optional string tel_nice          = 52;      // fxtel Schöne Nummern-Darstellung
+    optional string fax_nr_nice       = 53;      // fxtel Schöne Nummern-Darstellung
+    optional string tel_national      = 54;      // fxtel Nationale Nummern-Darstellung
+    optional string fax_nr_national   = 55;      // fxtel Nationale Nummern-Darstellung
+}
+
+// Technische Infos, im Journal und zur Wahl
+message CATSCallTechInfo {
+    optional string lineNumber       = 1; // Verwendete Leitungsnummer
+    optional string prefix           = 2; // Verwendetes Prefix
+    optional string prefixDesc       = 3;
+    optional string carrier          = 4; // Verwendeter Carrier/Netzzugehörigkeit
+    optional string carrierDesc      = 5;
+    optional string projectNumber    = 6; // Projektkennziffer/Vorgangsnummer
+    optional string projectDesc      = 7; // Projektbeschreibung
+    optional string dtmfAfterDial    = 8; // DTMF-Töne nach Wahl
+    optional string pbxDir           = 9; // Telefonanlagenrichtung/Bündel
+    optional string pbxDirDesc       = 10; // Telefonanlagenrichtung/Bündel Beschreibung
+    optional string projectCost1     = 11; // Kostenstelle 1
+    optional string projectCost1Desc = 12; // Kostenstelle 1 Beschreibung
+    optional string projectCost2     = 13;
+    optional string projectCost2Desc = 14;
+    optional string projectCost3     = 15;
+    optional string projectCost3Desc = 16;
+    optional string projectCost4     = 17;
+    optional string projectCost4Desc = 18;
+    optional string projectCost5     = 19;
+    optional string projectCost5Desc = 20;
+}
+
+message SupportedSpecials {
+    enum SpecialsEnum {
+        None                 = 0;
+        Answer               = 1;
+        Alternate            = 2;
+        CallBack           	 = 3;
+        //CallBackMessage    = 4;
+        //CampOn             = 5;
+        //ClearCall          = 6;
+        ClearConnection      = 7;
+        Conference           = 8;
+        Consultation         = 9;
+        Dial                 = 10;
+        DirectedPickup       = 11;
+        Deflect              = 12;
+        //GroupPickup        = 13;
+        Hold                 = 14;
+        //Intrude            = 15;
+        //Join               = 16;
+        Park                 = 17;
+        Reconnect            = 18;
+        Retrieve             = 19;
+        Transfer             = 20;
+        SingleStepTransfer   = 21;
+        SingleStepConference = 22;
+        DisconnectFromConference = 23;
+    }
+    repeated SpecialsEnum specials = 1;
+}
+
+message Settings {
+    required int32 message_type   = 1;
+    optional GetVars get_settings = 2;
+    optional Vars settings        = 3;
+    optional Vars set_settings    = 4;
+}
+
+message GetVars {
+    repeated string names = 1;          //Name der Variable die gelesen soll
+}
+
+message Vars {
+    message Var {
+        required string v_name = 1;     //Name des Variable die gelesen war
+        required bytes v_value = 2;     //Value für diese Varialble  kh: "value" ist reserviert
+    }
+    repeated Var vars = 1;
+}
+
+message RequestMask {
+    optional string start_time  = 3;    //wenn Feld exestiert, begrenze die suche von eingegebene Zeit
+    optional string end_time    = 4;    //wenn Feld exestiert, begrenze die suche bis eingegebene Zeit
+    optional int32  count       = 5;    //wenn Feld exestiert, begrenze die Anzahl des DatenSätze bis auf count.
+}
+
+message DeviceDescription {
+    enum DeviceType {
+        PBXext = 0;
+        mobile = 1;
+        phone  = 2;
+    }
+    required string device_id       = 1;
+    optional string device_id_full  = 5;                       //Ext Full +49251322311123
+    required DeviceType device_type = 2;
+    optional string device_name     = 3;
+    optional string device_comment  = 4;
+}
+
+message Forwarding {
+    enum ForwardingArt {
+        Immediate    = 0; //sofort
+        Busy         = 1; //bei Besetzt
+        NoAnswer     = 2; //wenn nicht abgenommen wird
+        DoNotDisturb = 3; //nicht stören
+    }
+    enum ForwardingCase {
+        AllCaller = 0;
+        InternalCaller = 1;
+        ExternalCaller = 2;
+    }
+    required bool state           = 1; //true an, false aus
+    optional string dest_deviceid = 2;
+    optional ForwardingArt  art   = 3;
+    optional ForwardingCase case  = 4;
+    optional int32 ring_count     = 5;
+    optional string dest_device_name = 6;
+    optional CATSDataSet dest_datatset = 7;
+}
+
+message DataScript {
+    required string script = 1;
+}

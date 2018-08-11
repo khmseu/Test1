@@ -1,0 +1,70 @@
+// $Id: CATS_Licence.proto 8879 2016-09-14 16:20:05Z kai $
+
+// AppMUX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "LicenceProto";
+
+message Licence {
+    //optional Check check = 1;
+    optional LicenceInfo info = 1;
+    //optional ClientLicenceFlags get_client_licence_flag = 3;
+    //optional ClientLicenceFlags client_licence_flag = 4;
+}
+
+/*message Check {
+    required string current_time = 1;
+    repeated string flag_list    = 2; // Flags, an denen wir interessiert sind
+}*/
+
+message LicenceInfo {
+    optional string current_time 	= 1; // Um sicherzustellen, dass der Server nicht stark von der Client-Zeit abweicht, nicht mehr als 2 Tage sollten erlaubt sein!
+    optional string serial_no 		= 2;
+    optional int32  ws_class 		= 3;
+    optional int32  monitors 		= 4; // Max. Monitorpunkte.
+    optional int32  clients 		= 5; // Client-Lizenzen
+    optional int32  lines			= 6; // Telefonanlagen
+    optional string expiration_date = 7; // Ablaufdatum
+    optional string update_limit    = 8; // Maximales Update-Datum
+    optional string licensee_short 	= 9; // Lizenznehmer Kurz: Enthält nur kurzen Namen zur Anzeige im Client.
+    optional string licensee	 	= 10; // Lizenznehmer: Enthält Namen, Adresse mit Zeilenumbruch. Erste Zeile ist immer der Name.
+    optional string oem_supplier	= 11; // Enthält Adresse und Support-Telefonnummer mit Zeilenumbruch. Erste Zeile ist immer der Name.
+    optional string copyright		= 12; // Enthält fixen copyright-String von SPUeNTRUP Software mit mehreren Zeilen und Adresse.
+    optional ClientLicenceFlags client_licence_flags = 13;
+    optional ServerLicenceFlags server_licence_flags = 14;
+}
+
+message ClientLicenceFlags {         //Userinterface
+    optional bool partner_list        = 1;
+    optional bool call_operator       = 2;
+    optional bool calls_journal       = 3;
+    optional bool call_history_search = 4;
+    optional bool chat                = 5;
+    optional bool call_back           = 6;
+    optional bool call_actions        = 7;
+    optional bool first_screean       = 8;
+    optional bool specials            = 9;
+    optional bool contact_search      = 10;
+    optional bool highlight           = 11;
+    // Hier fortsetzen.
+}
+
+message ServerLicenceFlags {
+    optional bool demo 				  = 1;
+    optional bool dial_only  		  = 2;
+    optional bool dial_only_with_acd  = 3;
+    optional bool oem  				  = 4;
+    optional bool stop_line_client    = 5;
+    // Hier fortsetzen.
+}
+
+// wenn eine Flag unbekannt ist, gibt es stattdessen eine Fehlermeldung
+// Bekannte Flags:
+// D - Demo
+// E - hat Events (sonst Dial-Only)
+// O - OEM-Version
+// L - dieser User ist lizensiert
+// diese haben alle Wert '0' oder '1' (???)

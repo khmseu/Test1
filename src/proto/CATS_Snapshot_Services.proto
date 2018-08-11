@@ -1,0 +1,29 @@
+// $Id: CATS_Snapshot_Services.proto 8879 2016-09-14 16:20:05Z kai $
+
+// AppPBX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "SnapshotProto";
+
+import "CATS_Support.proto";
+
+package SnapshotMessages;
+
+message Snapshot {
+    required int32                  s_command                = 1;
+    optional SnapshotDeviceArgument snapshot_device_argument = 2;
+    optional SnapshotDeviceResult   snapshot_device_result   = 3;
+}
+
+message SnapshotDeviceArgument {
+    optional string base_device = 1;
+}
+
+message SnapshotDeviceResult {
+    repeated int64                   calls  = 1;
+    repeated Support.ConnectionState states = 2;
+}
+

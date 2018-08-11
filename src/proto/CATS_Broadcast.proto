@@ -1,0 +1,24 @@
+// $Id: CATS_Broadcast.proto 8875 2016-09-14 07:59:48Z kai $
+
+// App???
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "BroadcastProto";
+
+import "CATS_CallAction.proto";
+import "CATS_Journal.proto";
+import "CATS_ExtStatus.proto";
+import "CATS_LiveMessage.proto";
+
+message Broadcast {
+    required int32 message_type = 1; 		               // Tag der Message (Extension-Nummer)
+    repeated int32          connList      = 2;             // Connections IDs Liste an der die Message verteilt werden soll
+
+    optional CallAction		call_action	  = 100;
+    optional CallJournal	call_journal  = 101;
+    optional ExtStatus		ext_status    = 103;
+    optional LiveMessage	live_message  = 105;
+}

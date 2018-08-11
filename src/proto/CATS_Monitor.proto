@@ -1,0 +1,44 @@
+// $Id: CATS_Monitor.proto 8875 2016-09-14 07:59:48Z kai $
+
+// AppMUX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "ConnectProto";
+
+package Monitor;
+
+message Property {
+    enum State {
+        GREEN = 1;
+        YELLOW = 2;
+        RED = 3;
+    };
+    optional string application      = 1; // AppMUX -> C3ServerMonitor only
+    optional string stat_change_time = 2;
+    required string prop_name        = 3; // Format: varname { '[' integer|string ']' | '.' fieldname }
+    required State  prop_state       = 4;
+    required string prop_message     = 5;
+};
+
+// App -> AppMUX, AppMUX -> C3ServerMonitor
+// always on conn 1
+message SetProperties {
+    repeated Property property  = 1;
+    optional bool     reset_app = 2 [default = false]; // true -> clear all existing properties
+}
+
+// Monitor -> Monitor
+message PropertyTable {
+    message Server {
+        message App {
+            required string   name       = 1;
+            required uint64   last_reset = 2;
+            repeated Property properties = 3;
+        };
+        repeated string path = 1;
+    };
+    repeated Server servers = 1;
+};

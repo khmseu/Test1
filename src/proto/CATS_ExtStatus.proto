@@ -1,0 +1,140 @@
+// $Id: CATS_ExtStatus.proto 8875 2016-09-14 07:59:48Z kai $
+
+// AppExtStatus
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "ExtStatusProto";
+
+import "CATS_Helper.proto";
+
+message ExtStatus {
+    required int32                  actionCommand       = 1;
+
+    optional DeviceGroupDescription device_state_change = 2;
+    repeated DeviceGroupDescription init_groups         = 3;
+    optional DeviceDescription      my_device           = 4;
+    optional InitGroup              init_group          = 5;
+    optional CurrentGroup           current_group       = 6;
+    optional SearchDevice           search_device       = 7;
+    optional ParkingQueue           parking_queue       = 8;
+    optional ParkingQueue           waiting_queue       = 9;
+    optional InitUserInterface      init_user_interface = 10;
+    optional Image                  request_image       = 11;
+}
+
+message DeviceState {
+    enum DeviceStateEnum {
+        ring      = 0;
+        dial      = 1;
+        connected = 2;
+        busy      = 4;
+        free      = 5;
+        unknown   = 6;
+    }
+
+    enum CallDirection {
+        dirInt     = 0;
+        dirExtIn   = 1;
+        dirExtOut  = 2;
+        dirUnknown = 3;
+    }
+
+    required int64             callID             = 1;
+    required DeviceStateEnum   state              = 2;
+    required string            device_id          = 3;                        //Ext 123
+    optional string            device_name        = 4;                        //Ext name
+    optional string            caller_number      = 5;
+    optional string            caller_name        = 6;                        //generierter oder aufgelöster Name
+    optional CATSDataSet       data_set           = 7;
+    optional SupportedSpecials supported_specials = 8;
+    optional Forwarding        forwarding         = 9;
+    optional string            agent_full_name    = 10;
+    repeated PassiveCallInfo   queue              = 11;
+    optional int32             connect_duration   = 12;
+    repeated CallPartnerInfo   call_partners      = 13;
+    optional CallDirection     callDirection      = 14;
+    optional string            device_id_full     = 15;                       //Ext Full +49251322311123
+    repeated ImageMapping      images             = 16;
+    optional string            vnst_id            = 17;
+    optional string            vnst_id_full       = 18;
+    optional string            vnst_name          = 19;
+}
+
+message CallPartnerInfo {
+    required string      partner_number   = 1;
+    optional string      partner_name     = 2;                        //generierter oder aufgelöster Name
+    optional CATSDataSet partner_data_set = 3;
+    optional bool        isExtern         = 4;
+}
+
+message PassiveCallInfo {
+    enum RelationToCall {
+        Knocked = 0;
+        Holded  = 1;
+    }
+    required int64             callID             = 1;
+    required RelationToCall    relation           = 2;
+    optional string            caller_number      = 3;
+    optional string            caller_name        = 4;                        //generierter oder aufgelöster Name
+    optional CATSDataSet       data_set           = 5;
+    optional SupportedSpecials supported_specials = 6;
+    optional int32             parked_time        = 7;
+}
+
+message ParkingQueue {
+    repeated PassiveCallInfo queued_calls = 1;
+}
+
+message DeviceGroupDescription {
+    enum  GroupType {
+        Internal    = 1;
+        External   = 2;
+    }
+    optional string               group        = 1;
+    optional bool                 custom_group = 2;
+    repeated DeviceState          device_state = 3;
+    optional GroupType            hgroup_type  = 4;
+}
+
+message InitGroup {
+    enum GroupAction {
+        AddGroup    = 1;
+        DelGroup    = 2;
+        UpdateGroup = 3;
+    }
+    required GroupAction            action            = 1;
+    required DeviceGroupDescription group_description = 2;
+}
+
+message CurrentGroup {
+    required string group = 1;
+}
+
+message SearchDevice {
+    required string search_term = 1;
+}
+
+message InitUserInterface {
+    required bool operator_enabled                = 1;
+    required bool operator_multiple_docks_enabled = 2;
+}
+
+
+message ImageMapping {
+    required Mapping    mapping             = 1;
+    required Image      image               = 2;
+}
+message Image {
+    required int32      id                  = 1;
+    optional bytes      image               = 2;
+    optional string     date_time_created   = 3;
+}
+message Mapping {
+    required string     target              = 1;
+    optional string     target_type         = 2;
+    optional string     date_time_created   = 3;
+}
+

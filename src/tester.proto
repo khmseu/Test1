@@ -1,0 +1,3 @@
+syntax = "proto2";
+package testerei;
+message Bla { optional string foo = 42; }
