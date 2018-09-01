@@ -1,0 +1,102 @@
+// $Id$
+
+// AppPBX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "RouteingProto";
+
+import "CATS_Support.proto";
+
+package RouteingMessages;
+
+message Routeing {
+    required int32                              r_command                      =  1;
+    optional RouteRegisterArgument              route_register_argument        =  2;
+    optional RouteRegisterResult                route_register_result          =  3;
+    optional RouteRegisterAbortArgument         route_register_abort_argument  =  4;
+    optional RouteRegisterCancelArgument        route_register_cancel_argument =  5;
+    optional RouteRegisterCancelResult          route_register_cancel_result   =  6;
+    optional ReRouteRequestArgument             re_route_request_argument      =  7;
+    optional RouteEndRequestArgument            route_end_request_argument     =  8;
+    optional RouteRejectArgument                route_reject_argument          =  9;
+    optional RouteRequestArgument               route_request_argument         = 10;
+    optional RouteSelectRequestArgument         route_select_request_argument  = 11;
+    optional RouteUsedRequestArgument           route_used_request_argument    = 12;
+}
+
+
+message RouteRegisterArgument {
+    optional string routeing_device = 1;
+}
+message RouteRegisterResult {
+    optional uint32 route_register_req_id = 1;
+}
+
+
+message RouteRegisterAbortArgument {
+    optional uint32 route_register_req_id = 1;
+}
+
+
+message RouteRegisterCancelArgument {
+    optional uint32 route_register_req_id = 1;
+}
+message RouteRegisterCancelResult {
+    // nix
+}
+
+
+message ReRouteRequestArgument {
+    optional uint32 cross_ref_identifier = 1;
+    optional uint32 route_register_req_id = 2;
+}
+
+
+message RouteEndRequestArgument {
+    optional uint32 cross_ref_identifier = 1;
+    optional uint32 route_register_req_id = 2;
+}
+
+
+message RouteRejectArgument {
+    optional uint32 cross_ref_identifier = 1;
+    optional uint32 route_register_req_id = 2;
+}
+
+
+enum SelectValue {
+    sv_normal = 0;
+    sv_leastCost = 1;
+    sv_emergency = 2;
+    sv_aCD = 3;
+    sv_userDefined = 4;
+};
+message RouteRequestArgument {
+    optional uint32 cross_ref_identifier = 1;
+    optional uint32 route_register_req_id = 2;
+    optional Support.Device current_route = 3;
+    optional Support.Device calling_device = 4;
+    optional Support.Device routeing_device = 5;
+    optional int32  routed_call = 6;
+    optional SelectValue route_sel_algorithm = 7;
+}
+
+
+message RouteSelectRequestArgument {
+    optional uint32 cross_ref_identifier = 1;
+    optional uint32 route_register_req_id = 2;
+    optional string route_selected = 3;
+    optional bool route_used_req = 4;
+}
+
+
+message RouteUsedRequestArgument {
+    optional uint32 cross_ref_identifier = 1;
+    optional uint32 route_register_req_id = 2;
+    optional Support.Device route_used = 3;
+    optional Support.Device calling_device = 4;
+}
+

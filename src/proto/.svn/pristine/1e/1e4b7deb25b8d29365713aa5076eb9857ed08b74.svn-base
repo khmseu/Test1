@@ -1,0 +1,177 @@
+// $Id$
+
+// AppSpecials
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "SpecialsProto";
+
+import "CATS_Helper.proto";
+
+message Specials {
+    required int32 special_command                               = 1;
+    optional Dial dial                                           = 2;
+    optional ClearConnection clear_connection                    = 3;
+    optional Answer answer                                       = 4;
+    optional SupportedSpecials supported_specials                = 5;
+    optional GetSupportedSpecials get_supported_specials         = 6;
+    optional SpecialResult special_result                        = 7;
+    optional DirectedPickup directed_pickup                      = 8;
+    optional ExtensionInfo extension_info                        = 9;
+    optional DeflectCall deflect_call                            = 10;
+    optional SingleStepTransfer single_step_transfer             = 11;
+    optional Forwarding setforwarding                            = 12;
+    optional SingleStepConference single_step_conference         = 13;
+    optional Hold hold                                           = 14;
+    optional Consultation consultation                           = 15;
+    optional Retrieve retrieve                                   = 16;
+    optional Transfer transfer                                   = 17;
+    optional Conference conference                               = 18;
+    optional Alternate alternate                                 = 19;
+    optional Reconnect reconnect                                 = 20;
+    optional MakeCallBack make_callback                          = 21;
+    optional ParkCall park_call                                  = 22;
+    optional DisconnectFromConference disconnect_from_conference = 23;
+    optional SetDialMode info_dial_mode                          = 24;
+    optional SetDialMode set_dial_mode                           = 25;
+    optional DialFor dial_for                                    = 26;
+}
+
+message GetSupportedSpecials
+{}
+
+message SpecialResult {
+    enum SpecialSuccess {
+        success = 0;
+        error   = 1;
+    }
+
+    enum SpecialErrorCode {
+        Successed                  = 0;
+        Failed                     = 1;
+        CurrentlyNotAllowed        = 2;
+        NotAllowed                 = 3;
+        NotImplemented             = 4;
+        CATS_Server_Error          = 5;
+        PBX_Error                  = 6;
+        PBX_Offline                = 7;
+        BadParams                  = 8;
+        DialBreakRedirectQuest     = 9; // Nummer zum wählen steht im Result-String, erneut wählen mit gesetztem break_forwarding-Flag
+        DialBreakRedirectForbidden = 10; // Durchbrechen nicht erlaubt
+        DialWindowNotRecognized    = 11;
+    }
+
+    optional int32          special_command = 1;
+    optional SpecialSuccess result          = 2;
+    optional string         result_str      = 3;
+    optional int64          call_id         = 4;
+    optional SpecialErrorCode error_code    = 5;
+}
+
+message ExtensionInfo {
+    required DeviceDescription my_device              = 1;
+    optional DialForDeviceList dial_for_device_list   = 2;
+    repeated DeviceDescription watchlist              = 3;
+}
+
+message Dial {
+    required string number         = 1;            // Number to dial
+    optional bool break_forwarding = 2;
+    optional string dial_url       = 3;         // Für beliebige Wahl-Parameter wird die ursprüngliche Dial-Url übergeben.
+}
+
+message DialFor {
+    required string number = 1;            // Number to dial
+    required string device = 2;            // Device wird für welchen  gewählt
+}
+
+message ClearConnection {
+    required int64 callid  = 1;            //Callid to kill (can be 0).
+}
+
+message Answer {
+    required int64 callid = 1;            //Callid to Answer
+}
+
+message DirectedPickup {
+    required int64 callid = 1;
+}
+
+message DeflectCall {
+    required int64 callid      = 1;
+    required string deflect_to = 2;
+}
+
+message SingleStepTransfer {
+    required int64 callid       = 1;
+    required string transfer_to = 2;
+}
+
+message SingleStepConference {
+    required int64 callid        = 1;
+    required string added_device = 2;
+}
+
+message Hold {
+    required int64 callid = 1;
+}
+
+message Retrieve {
+    required int64 callid = 1;
+}
+
+message Consultation {
+    required int64 callid            = 1;
+    required string consulted_device = 2;
+}
+
+message Transfer {
+    required int64 callid        = 1;
+    required int64 holded_callid = 2;
+}
+
+message Conference {
+    required int64 callid        = 1;
+    required int64 holded_callid = 2;
+}
+
+message DisconnectFromConference {
+    required int64 callid              = 1;
+    required string conferenced_device = 2;
+}
+
+message Alternate {
+    required int64 callid        = 1;
+    required int64 holded_callid = 2;
+}
+
+message Reconnect {
+    required int64 callid        = 1;
+    required int64 holded_callid = 2;
+}
+
+message MakeCallBack {
+    required int64 callid = 1;
+}
+
+message ParkCall {
+    required int64 callid = 1;
+}
+
+message DialForDevice {
+    required DeviceDescription device = 1;
+    optional bool allow_dial_for_mode = 2;
+}
+
+message DialForDeviceList {
+    repeated DialForDevice devices = 1;
+    optional int32 selected_device = 2;
+}
+
+message SetDialMode {
+    required bool use_external_device = 1;
+    optional string device_id         = 2;
+}
+

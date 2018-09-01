@@ -1,0 +1,35 @@
+// $Id$
+
+// AppPBX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "CallAssociatedProto";
+
+import "CATS_Support.proto";
+
+package CallAssociatedMessages;
+
+message CallAssociated {
+    required int32               ca_command             = 1;
+    optional SetUserDataArgument set_user_data_argument = 2;
+    optional SetUserDataResult   set_user_data_result   = 3;
+};
+
+
+message SetUserDataArgument {
+    optional string base_device = 1;
+    optional int64  call        = 2;
+    required int32  index       = 3; // zur freien Verwendung durch Clients
+    //                                          vom alten Server, wahrscheinlich:
+    //                                          CallRAttrs  -> User[1] (SETATTR, nicht implementiert in 2.10)
+    //                                          CallDEAttrs -> User[2] (http://cats-server:39044/data-event?Rufnummer=xxx&CallData=xxx&...)
+    required string value       = 4;
+};
+
+message SetUserDataResult {
+    // nix
+};
+

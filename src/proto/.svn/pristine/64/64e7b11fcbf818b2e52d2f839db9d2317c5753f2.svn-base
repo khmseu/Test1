@@ -1,0 +1,44 @@
+// $Id$
+
+// AppMUX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "ConnectProto";
+
+import "CATS_Helper.proto";
+
+message Connect {
+    optional ToApp      to_app      = 1;
+    optional FromClient from_client = 2;
+    optional Connected  connected   = 3;
+    optional Accepted   accepted    = 4;
+    optional Disconnect disconnect	= 5;
+}
+
+message ToApp {										 // Anforderung an appMUX von Client
+    required string appname = 1;
+}
+
+message FromClient { 								// Nachricht appMUX -> Applikation
+    required int32   new_conn = 1; 					//nummer des logischen Verbindung zur client (streamID)
+    required string  client   = 2; 					// Authorization ID von Login
+    required Version version  = 3; 					// Client-Version von Login
+    required string  agent_name = 4;
+    required string  pc_name = 5;
+}
+
+message Accepted { 									// Antwort von Application zur appMUX
+    required int32   new_conn = 1; 					//nummer des logischen Verbindung zur client (streamID)
+}
+
+message Connected { 								// Antwort vom appMUX zu Client
+    required int32   new_conn = 1;					//nummer des logischen Verbindung zur client (streamID)
+    required Version version  = 2; 					// Application-Version (von deren Login)
+}
+
+message Disconnect {								//schliessen logische Verbing(stream) zwischen Client und Application
+    required int32   conn_id = 1; 					//nummer des logischen Verbindung(streamID) zur client oder Application von denem diskonnectet werden soll
+}

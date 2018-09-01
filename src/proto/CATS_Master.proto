@@ -1,4 +1,4 @@
-// $Id: CATS_Master.proto 8960 2016-12-15 18:08:08Z kai $
+// $Id: CATS_Master.proto 9014 2017-01-10 15:42:49Z kai $
 
 // AppMUX
 
@@ -21,7 +21,7 @@ import "CATS_Specials.proto";
 import "CATS_LiveMessage.proto";
 import "CATS_CallBack.proto";
 import "CATS_AddressResolution.proto";
-//import "PL_NG.proto";
+//import "PL//_NG.proto";
 
 // Server
 import "CATS_DBUpdate.proto";
@@ -65,8 +65,8 @@ message C3T {
     optional LiveMessage       live_message       = 105;
     optional CallBack          callback           = 106;
     optional Settings          settings           = 107;
- //   optional PLng.PLngAppMsg   plng_app_msg       = 109;
-  //  optional PLng.PLngCltMsg   plng_clt_msg       = 110;
+    //    optional PLng.PLngAppMsg   plng_app_msg       = 109;
+    //    optional PLng.PLngCltMsg   plng_clt_msg       = 110;
 
     // Ab hier Server-Only-Komponenten, 200+
     optional Broadcast			broadcast       = 200;                         //broadcast innerhalb AppServer

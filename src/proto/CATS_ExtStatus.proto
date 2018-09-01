@@ -1,4 +1,4 @@
-// $Id: CATS_ExtStatus.proto 8875 2016-09-14 07:59:48Z kai $
+// $Id: CATS_ExtStatus.proto 9478 2017-09-29 16:33:32Z kai $
 
 // AppExtStatus
 
@@ -38,7 +38,7 @@ message DeviceState {
     enum CallDirection {
         dirInt     = 0;
         dirExtIn   = 1;
-        dirExtOut  = 2;
+        dirExtOut  = 2; // unused?!
         dirUnknown = 3;
     }
 

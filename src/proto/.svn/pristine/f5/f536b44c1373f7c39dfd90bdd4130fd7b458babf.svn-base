@@ -1,0 +1,91 @@
+// $Id$
+
+// AppMUX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "LoginProto";
+
+import "CATS_Helper.proto";
+
+//package C3_Login;
+
+message Login {
+    optional Algo      algo      = 1;
+    optional Start     start     = 2;
+    optional Challenge challenge = 3;
+    optional Response  response  = 4;
+    optional Outcome   outcome   = 5;
+}
+
+// Server:
+message Algo {
+    required Version version      = 1; // Server-Version
+    required int32   base_conn_id = 2; // für Login und Connect
+    repeated string  algo         = 3; // unterstützte Algorithmen
+}
+
+// Client:
+message Start {
+    required Version version = 1; // Client-Version
+    required string  algo    = 2; // einen von Algo auswählen
+    optional bytes   request = 3;
+    required string  agent_name = 4; // FALSCH HIER: required string  agent_name = 4;
+    required string  pc_name    = 5; // FALSCH HIER: required string  pc_name    = 5;
+    // stattdessen in AuthorizationId oder separat hinterher
+    // z.B. PLAIN: 3 Null-terminierte Strings:
+    // AuthorizationId, AuthenticationId, Passwort
+}
+
+// Server:
+message Challenge { // optional
+    required bytes challenge = 1;
+}
+
+// Client:
+message Response { // optional
+    required bytes response = 1;
+}
+
+// Server:
+message Outcome {
+    enum Outcomes {
+        OK       = 0;
+        AskAgain = 1; // zB falsches Passwort
+        Wait     = 2; // zB Service angehalten
+        Admin    = 3; // nur ein Admin kann hier helfen
+        WrongUserKey = 4; // nur ein Admin kann hier helfen
+    }
+    required Outcomes outcome = 1;
+    optional bytes    info    = 2;
+}
+
+// Client:
+message StartTLS { // optional
+    // keine Parameter?
+    // Antwort ist TLS (SSL)-Handshake?
+}
+
+
+//start und initialiesierung des Application
+message ApplicationStart {
+    required int32 message_type = 1; 					// Tag der Message (Extension-Nummer)
+    optional bool get_system_parameters = 2;
+    optional SystemParameters system_parameters = 3;
+    optional bool app_ready = 4;
+}
+
+message SystemParameters {
+    optional DBSettings db_settings = 1;
+    optional string public_number_unused = 2;					//für früeren versionen später soll abgeschaft werden
+}
+
+message DBSettings {
+    required string db_host = 1;
+    required string db_port = 2;
+    required string db_name = 3;
+    required string db_user = 4;
+    required string db_pass = 5;
+}

@@ -1,0 +1,106 @@
+// $Id$
+
+// AppCallActions
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "CallActionProto";
+
+import "CATS_Helper.proto";
+
+message CallAction {
+    required int32     actionCommand              = 1;
+
+    optional int64 callID                         = 2;
+    optional ShowPopupWindow show_popup           = 3;
+    optional ShowFirstScreen show_firstscreen     = 4;
+    optional HidePopupWindow hide_popup           = 5;
+    optional PopupSettings   popup_getsettings    = 6;
+    optional PopupSettings   popup_setsettings    = 7;
+    optional GetDataToWindow get_first_screen     = 8;
+    optional GetDataToWindow get_popup            = 9;
+    optional ConnectToLogic  connectToFirstScreen = 10;
+    optional ConnectToLogic  connectToPopup       = 11;
+    optional ConnectToLogic  connectToShareScreen = 12;
+    optional GetShareScreen  get_share_screen     = 13;
+    optional ShowFirstScreen show_share_screen    = 14;
+    optional DataScript create_script             = 15; // Das Popup-Script für Links im Toaster
+
+    // optional ShowHtml              showHtml         = ;    auskommentierte Felder sollten möglicherweise in eine
+    // optional StartProgram         program         = ;    Special-Applikation verschoben werden, die mögliche Aktionen
+    // optional SetClipBoard         clipBoard         = ;    wie Programmausführungen oder Specials wie annehmen starten.
+
+}
+
+
+//Zeigt klassisches Popupfenster (Toaster) an
+message ShowPopupWindow {
+    optional int32       timeout                  = 1;
+    optional string      called_ext               = 2;
+    optional string      called_ext_info          = 11;
+    optional string      caller_number            = 3; //original AnruferNummer
+    optional CATSDataSet dataset                  = 4;
+    optional SupportedSpecials supported_specials = 5;
+    optional string      agent_name               = 6;
+    optional string      called_vext              = 7;
+    optional string      called_vext_info         = 9;
+
+    optional string URL                           = 8;
+    //repeated callhistory    -   zu diesem Anrufer z.b. die letzten 3-10 Aktivitäten
+    //repeated  Actionen, die Client ausfüren soll. z.b. Mach eine Fenster im Outlook auf
+
+    enum PopupReason { Alerting = 1;
+        PickedUp = 2;
+        Finished = 3; }
+
+    optional PopupReason popup_reason            = 10;
+}
+
+//Versteckt das Popup-Fenster
+message HidePopupWindow {
+    optional int32 timeout = 1;
+}
+
+message ConnectToLogic {
+    enum LogicConnectAction {
+        LogicConnect    = 1;
+        LogicDisconnect = 2;
+    }
+    required LogicConnectAction connect_action = 1;
+}
+
+//Firstscreen
+message ShowFirstScreen {
+    optional int32  timeout          = 1;
+    optional string URL              = 2;
+    optional SupportedSpecials supported_specials = 3;
+    optional string caller_number    = 4;
+    optional string called_ext       = 5;
+    optional string called_ext_info  = 8;
+    optional string called_vext      = 6;
+    optional string called_vext_info = 7;
+}
+
+message GetDataToWindow {
+    required string caller_number = 1; // Dämliche required-Felder.
+    optional string customer_id   = 2;
+    optional string adr_id = 3;
+}
+
+message GetShareScreen {
+    optional string caller_number     = 1;
+    optional string customer_id       = 5;
+
+    optional string date_time_start   = 2;
+    optional string date_time_end     = 3;
+    optional string date_time_entered = 4;
+    optional string adr_id = 6;
+}
+
+
+
+message PopupSettings {
+
+}

@@ -1,0 +1,13 @@
+// $Id$
+
+// AppCATSServer
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "CATSServerMessageProto";
+
+message CATSServerMessage {
+    required string line = 1;
+}

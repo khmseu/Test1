@@ -1,0 +1,26 @@
+// $Id$
+
+// AppExtService
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "ExtServicesProto";
+
+message ExtServices {
+    required int32 messagetype = 1;
+
+    optional CallRegister		call_register = 2;
+    optional CallRegisterResult	call_register_result = 3;
+}
+
+
+message CallRegister {
+
+}
+
+message CallRegisterResult {
+    optional string reference = 1;
+}
+

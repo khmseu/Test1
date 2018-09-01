@@ -1,0 +1,35 @@
+// $Id$
+
+// AppMUX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "MasterMuxProto";
+
+// Master-Datei für Server, enthält die Client-Daten
+// Client
+import "CATS_Helper.proto";
+import "CATS_Connect.proto";
+import "CATS_Licence.proto";
+import "CATS_Login.proto";
+import "CATS_DBUpdate.proto";
+import "CATS_Monitor.proto";
+
+
+message C3T {
+    required RequestHeader request_header = 1;
+
+    optional Login                 login      = 4;
+    optional Connect               connect    = 5;
+    optional Licence               licence    = 6;
+    //       unused                           = 7;
+    optional ApplicationStart      app_start  = 8;
+    optional KeepAlive             keep_alive = 9;
+    optional DatenBankUPDATE       db_update  = 10;
+    optional Monitor.SetProperties setprops   = 11;
+    optional Monitor.PropertyTable proptable  = 12;
+
+    extensions 1000 to max;
+}

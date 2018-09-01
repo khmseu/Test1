@@ -1,0 +1,95 @@
+// $Id$
+
+// AppMUX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "MasterProto";
+
+// Master-Datei für Server, enthält die Client-Daten
+// Client
+import "CATS_Helper.proto";
+import "CATS_Connect.proto";
+import "CATS_Licence.proto";
+import "CATS_Login.proto";
+import "CATS_CallAction.proto";
+import "CATS_Journal.proto";
+import "CATS_ExtStatus.proto";
+import "CATS_Specials.proto";
+import "CATS_LiveMessage.proto";
+import "CATS_CallBack.proto";
+import "CATS_AddressResolution.proto";
+//import "PL//_NG.proto";
+
+// Server
+import "CATS_DBUpdate.proto";
+import "CATS_Broadcast.proto";
+import "CATS_Call_Associated_Feature_Services.proto";
+import "CATS_Call_Control_Services.proto";
+import "CATS_Capability_Exchange_Services.proto";
+import "CATS_Events.proto";
+import "CATS_Logical_Device_Feature_Services.proto";
+import "CATS_Routeing_Services.proto";
+import "CATS_Snapshot_Services.proto";
+import "CATS_CATSServerMessage.proto";
+import "CATS_ExtServices.proto";
+import "CATS_SQL.proto";
+import "CATS_IO_Services.proto";
+import "CATS_Support.proto";
+import "CATS_Monitor.proto";
+
+message C3T {
+    required RequestHeader request_header = 1;
+    optional ErrorId       error          = 2;
+
+    repeated C3T           c3_submsgs     = 3; // Zusatzarray für beliebig viele zusätzliche Master-Messages
+
+    optional Login                 login      = 4;
+    optional Connect               connect    = 5;
+    optional Licence               licence    = 6;
+    //       unused                           = 7;
+    optional ApplicationStart      app_start  = 8;
+    optional KeepAlive             keep_alive = 9;
+    optional DatenBankUPDATE       db_update  = 10;
+    optional Monitor.SetProperties setprops   = 11;
+    optional Monitor.PropertyTable proptable  = 12;
+
+    // Client-Komponenten, 100+
+    optional CallAction        call_action        = 100;
+    optional AddressResolution address_resolution = 102;
+    optional CallJournal       call_journal       = 101;
+    optional ExtStatus         ext_status         = 103;
+    optional Specials          specials           = 104;
+    optional LiveMessage       live_message       = 105;
+    optional CallBack          callback           = 106;
+    optional Settings          settings           = 107;
+    //    optional PLng.PLngAppMsg   plng_app_msg       = 109;
+    //    optional PLng.PLngCltMsg   plng_clt_msg       = 110;
+
+    // Ab hier Server-Only-Komponenten, 200+
+    optional Broadcast			broadcast       = 200;                         //broadcast innerhalb AppServer
+    optional ExtServices		ext_services	= 201;
+    optional RemoteSQL.SQLop	remote_sql      = 202;
+
+    // AppPBX, 300+
+    optional CallControlMessages.CallControl       call_control    = 300;
+    optional CapExchangeMessages.CapExchange       cap_exchange    = 301;
+    optional EventMessages.WantEvents              want_events     = 302;
+    optional EventMessages.Event                   event           = 303;
+    optional LogDevFeatureMessages.LogDevFeature   log_dev_feature = 304;
+    optional RouteingMessages.Routeing             routeing        = 305;
+    optional CallAssociatedMessages.CallAssociated call_associated = 306;
+    optional SnapshotMessages.Snapshot             snapshot        = 307;
+    optional IOServicesMessages.IOServices         i_o_services    = 308;
+
+    // interne Messages, 400+
+    optional EventMessages.PBXManagerEvent pbx_manager_event = 400;
+    optional Support.CSTA_IID              csta              = 401;
+    optional string                        tag               = 402; // any generic tag
+
+    optional CATSServerMessage cats_message = 999;                // wrapt Line-Protocol vom CATS-Server
+
+    extensions 1000 to max;
+}

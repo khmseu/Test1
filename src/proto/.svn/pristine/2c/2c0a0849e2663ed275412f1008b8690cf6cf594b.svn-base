@@ -1,0 +1,211 @@
+// $Id$
+
+// AppPBX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "IOServicesProto";
+
+import "CATS_Support.proto";
+import "CATS_Events.proto";
+
+package IOServicesMessages;
+
+message IOServices {
+    required int32                     dio_command                  =  1;
+    optional StartDataPathArgument     start_data_path_argument     =  2;
+    optional StartDataPathResult       start_data_path_result       =  3;
+    optional StopDataPathArgument      stop_data_path_argument      =  4;
+    optional StopDataPathResult        stop_data_path_result        =  5;
+    optional SendDataArgument          send_data_argument           =  6; // also FastDataArgument
+    optional SendDataResult            send_data_result             =  7; // also FastDataResult
+    optional SendMulticastDataArgument send_multicast_data_argument =  8;
+    optional SendMulticastDataResult   send_multicast_data_result   =  9;
+    optional SendBroadcastDataArgument send_broadcast_data_argument = 10;
+    optional SendBroadcastDataResult   send_broadcast_data_result   = 11;
+    optional SuspendDataPathArgument   suspend_data_path_argument   = 12;
+    optional SuspendDataPathResult     suspend_data_path_result     = 13;
+    optional DataPathSuspendedArgument data_path_suspended_argument = 14;
+    optional DataPathSuspendedResult   data_path_suspended_result   = 15;
+    optional ResumeDataPathArgument    resume_data_path_argument    = 16;
+    optional ResumeDataPathResult      resume_data_path_result      = 17;
+    optional DataPathResumedArgument   data_path_resumed_argument   = 18;
+    optional DataPathResumedResult     data_path_resumed_result     = 19;
+    optional IORegisterArgument        io_register_argument         = 20;
+    optional IORegisterResult          io_register_result           = 21;
+    optional IORegisterCancelArgument  io_register_cancel_argument  = 22; // also IORegisterAbortArgument
+    optional IORegisterCancelResult    io_register_cancel_result    = 23;
+}
+
+// Parameters ----------------------------------------------------------------
+
+// These <bytes> are max length 4:
+// keyNumber displayID
+
+// uint32                   ioCrossRefID                =   1;
+// uint32                   ioRegisterReqID             =   2;
+// string                   object                      =   3;
+// DataPathDirection        dataPathDirection           =   4;
+// DataPathType             dataPathType                =   5;
+// bytes                    displayID                   =   6;
+// DisplayAttributeList     displayAttributes           =   7;
+// bytes                    ioData                      =   8;
+// EventMessages.EventCause ioCause                     =   9;
+// int32                    numberOfCharactersToCollect =  10;
+// string                   terminationCharacter        =  11; // length 1
+// int32                    timeout                     =  12;
+// string                   base_device                 =  90;
+// DisplayMode              displayMode                 = 100;
+// AudibleIndication        audibleIndication           = 101;
+// string                   applicationId               = 102;
+// bytes                    keyNumber                   = 105;
+
+enum DataPathType {
+    text  = 0;
+    voice = 1;
+}
+message DisplayAttributeList {
+    optional bytes displayID                = 1;
+    optional int32 physicalBaseRowNumber    = 2;
+    optional int32 physicalBaseColumnNumber = 3;
+    optional int32 offset                   = 4;
+}
+
+// Arguments and Results -----------------------------------------------------
+
+message StartDataPathArgument {
+    enum DataPathDirection {
+        computeFunctionToObject = 0;
+        objectToComputeFunction = 1;
+        bidirectional           = 2;
+    }
+    optional uint32            ioRegisterReqID             =   2;
+    optional string            object                      =   3;
+    optional DataPathDirection dataPathDirection           =   4;
+    optional DataPathType      dataPathType                =   5;
+    optional bytes             displayID                   =   6;
+    optional int32             numberOfCharactersToCollect =  10;
+    optional string            terminationCharacter        =  11; // length 1
+    optional int32             timeout                     =  12;
+    optional string            applicationId               = 102;
+}
+
+message StartDataPathResult {
+    optional uint32 ioCrossRefID                =   1;
+    optional int32  numberOfCharactersToCollect =  10;
+    optional string terminationCharacter        =  11; // length 1
+    optional int32  timeout                     =  12;
+    optional bytes  keyNumber                   = 105;
+}
+
+message StopDataPathArgument {
+    optional uint32 ioCrossRefID    = 1;
+    optional uint32 ioRegisterReqID = 2;
+}
+
+message StopDataPathResult {
+    // nothing
+}
+
+message SendDataArgument {
+    enum DisplayMode {
+        temporaryMode = 0;
+        fixedMode     = 1;
+    }
+    enum AudibleIndication {
+        silentIndication = 0;
+        beepIndication   = 1;
+    }
+    optional uint32                   ioCrossRefID      =   1;
+    optional uint32                   ioRegisterReqID   =   2;
+    optional string                   object            =   3;
+    optional DataPathType             dataPathType      =   5;
+    optional DisplayAttributeList     displayAttributes =   7;
+    optional bytes                    ioData            =   8;
+    optional EventMessages.EventCause ioCause           =   9;
+    optional DisplayMode              displayMode       = 100;
+    optional AudibleIndication        audibleIndication = 101;
+    optional string                   applicationId     = 102;
+}
+
+message SendDataResult {
+    // nothing
+}
+
+message SendMulticastDataArgument {
+    repeated uint32                   ioCrossRefID      =   1;
+    optional DisplayAttributeList     displayAttributes =   7;
+    optional bytes                    ioData            =   8;
+}
+
+message SendMulticastDataResult {
+    // nothing
+}
+
+message SendBroadcastDataArgument {
+    required string                   base_device       =  99;
+    optional DataPathType             dataPathType      =   5;
+    optional DisplayAttributeList     displayAttributes =   7;
+    optional bytes                    ioData            =   8;
+}
+
+message SendBroadcastDataResult {
+    // nothing
+}
+
+message SuspendDataPathArgument {
+    optional uint32 ioCrossRefID    = 1;
+    optional uint32 ioRegisterReqID = 2;
+}
+
+message SuspendDataPathResult {
+    // nothing
+}
+
+message DataPathSuspendedArgument {
+    optional uint32 ioCrossRefID    = 1;
+    optional uint32 ioRegisterReqID = 2;
+}
+
+message DataPathSuspendedResult {
+    // nothing
+}
+
+message ResumeDataPathArgument {
+    optional uint32 ioCrossRefID    = 1;
+    optional uint32 ioRegisterReqID = 2;
+}
+
+message ResumeDataPathResult {
+    // nothing
+}
+
+message DataPathResumedArgument {
+    optional uint32 ioCrossRefID    = 1;
+    optional uint32 ioRegisterReqID = 2;
+}
+
+message DataPathResumedResult {
+    // nothing
+}
+
+message IORegisterArgument {
+    required string base_device   =  99;
+    optional bytes  ioDevice      =   3;
+    optional string applicationId = 102;
+}
+
+message IORegisterResult {
+    optional uint32 ioRegisterReqID = 2;
+}
+
+message IORegisterCancelArgument {
+    optional uint32 ioRegisterReqID = 2;
+}
+
+message IORegisterCancelResult {
+    // nothing
+}
+

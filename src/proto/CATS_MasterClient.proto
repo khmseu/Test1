@@ -1,4 +1,4 @@
-// $Id: CATS_MasterClient.proto 8960 2016-12-15 18:08:08Z kai $
+// $Id: CATS_MasterClient.proto 9054 2017-01-23 09:51:11Z kai $
 
 // AppMUX
 
@@ -22,7 +22,7 @@ import "CATS_LiveMessage.proto";
 import "CATS_CallBack.proto";
 import "CATS_AddressResolution.proto";
 import "CATS_Monitor.proto";
-//import "PL_NG.proto";
+//import "PL//_NG.proto";
 
 message C3T {
     required RequestHeader request_header = 1;
@@ -49,8 +49,8 @@ message C3T {
     optional CallBack          callback           = 106;
     optional Settings          settings           = 107;
     //optional CommonConfig      common             = 108;
- //   optional PLng.PLngAppMsg   plng_app_msg       = 109;
-  //  optional PLng.PLngCltMsg   plng_clt_msg       = 110;
+    //optional PLng.PLngAppMsg   plng_app_msg       = 109;
+    //optional PLng.PLngCltMsg   plng_clt_msg       = 110;
 
     extensions 1000 to max;
 }

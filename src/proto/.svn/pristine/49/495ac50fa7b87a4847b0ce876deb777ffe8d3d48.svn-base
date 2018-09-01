@@ -1,0 +1,28 @@
+// $Id$
+
+// AppPBX
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "CapExchangeProto";
+
+import "CATS_Support.proto";
+
+package CapExchangeMessages;
+
+message CapExchange {
+    required int32                ce_command             = 1;
+    optional QuerySupportArgument query_support_argument = 2;
+    optional QuerySupportResult   query_support_result   = 3;
+}
+
+message QuerySupportArgument {
+    optional string base_device = 1;
+}
+
+message QuerySupportResult {
+    repeated int32 supported = 1 [packed=true]; // XXXArgument-Tags
+}
+

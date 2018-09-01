@@ -1,4 +1,4 @@
-// $Id: CATS_LiveMessage.proto 8875 2016-09-14 07:59:48Z kai $
+// $Id: CATS_LiveMessage.proto 9217 2017-04-21 16:41:53Z daniel $
 
 // AppLiveMessenger
 
@@ -42,6 +42,7 @@ enum enStatus {
 message SetMyStatus {
     required enStatus set_status = 2;
     optional string my_full_name = 3;
+    optional string status_text  = 4;
 }
 
 message AddUser {
@@ -54,6 +55,7 @@ message UserStatus {
     optional string extension		= 3;
     optional string extension_full	= 5;
     optional string user_full_name  = 4;
+    optional string status_text     = 6;
 }
 
 message GetChatHistory {

@@ -1,4 +1,4 @@
-// $Id: CATS_AddressResolution.proto 8875 2016-09-14 07:59:48Z kai $
+// $Id: CATS_AddressResolution.proto 10094 2018-08-08 08:40:26Z daniel $
 
 // AppAddressResolution
 
@@ -26,6 +26,8 @@ message AddressResolution {
 message ResolveNumber {
     optional string tel_number  = 1;
     optional string customer_id = 2;
+    optional string vnst = 3;
+    optional string filter = 4;
 }
 
 message ResolveResult {

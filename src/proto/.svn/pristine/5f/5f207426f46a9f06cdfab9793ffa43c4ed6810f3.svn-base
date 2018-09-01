@@ -1,0 +1,111 @@
+// $Id$
+
+// AppCallback
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "CallBackProto";
+
+import "CATS_Helper.proto";
+
+message CallBack {
+    required int32 message_type             = 1;
+    repeated CallBackInfo 	callbacks       = 2;
+    optional GetCallBacks 	get_callbacks   = 3;
+    repeated UpdateCallBack update_callback = 4;
+    optional GetAgentList 	get_agent_list  = 5;
+    repeated AgentInfo 		agent_list		= 6;
+    optional CreateCallBack create_callback = 7;
+    optional StartCallBack  start_callback  = 8;
+    optional ShowCallBackSuccessQuestion success_question = 9;
+    optional DataScript     create_script   = 10;
+}
+
+enum CallBackStatus {
+    newCallback        = 0; // j - Neuer Rückruf
+    inProgressCallback = 1; // b - Rückruf ist gerade in Bearbeitung
+    doneCallback       = 2; // e - Rückruf wurde bearbeitet
+    manualCallback     = 3; // m - Rückruf soll manuell bearbeitet werden (wenn von Robot eingetragen.)
+    noCallback         = 4; // n - kein Rückruf gewünscht
+    blocked            = 5; // r - in Bearbeitung durch Replay
+}
+
+// Beinhaltet Rückruf-Informationen.
+message CallBackInfo {
+    required int32 callback_id           = 1;
+    //Daten über Rückruf
+    optional CallBackStatus status       = 2;
+    optional string caller_number        = 3;
+    optional string callback_number      = 4;  // Nummer von Anrufer, auf den der Rückruf durchgeführt werden soll
+    optional string caller_number_nice   = 31; // Schöne Nummern-Darstellung
+    optional string callback_number_nice = 41; // Schöne Nummern-Darstellung
+    optional string caller_number_national   = 32; // National Nummern-Darstellung
+    optional string callback_number_national = 42; // National Nummern-Darstellung
+    optional string date_time_entered    = 5;
+    optional string date_time_planned    = 6;
+    optional string date_time_finished   = 7;
+    optional int32  message_duration     = 8;
+    optional string memo                 = 9;
+    optional CATSDataSet data_set        = 10;
+    optional string callback_creator     = 11;
+    optional string callback_receiver    = 12;
+
+    enum CallBackDirection {
+        forMeByMe           = 0; 						// habe ich selbst den Rückruf erstellt?
+        forMeByPartner      = 1; 						// Von jemand anders für mich
+        forPartnerByMe      = 2; 						// Von mir für einen Partner
+        forPartnerByPartner = 3; 						// Von einem Partner für einen anderen Partner
+        forMeByReplay       = 4;						// eigene Bearbeitung durch Replay
+    }
+    optional CallBackDirection direction = 13;
+    optional bool is_newly_created       = 14; 		// Wurde der Rückruf gerade durchgeführt oder ist er schon alt?
+    optional bool voicemail              = 15; 		// Hat der Rückruf eine Sprachnachricht hinterlassen??
+    //optional bool archived             = 16;
+}
+
+message GetCallBacks {
+    repeated CallBackStatus status    = 1;    		// gewünschte Statusrückrufe
+    optional RequestMask request_mask = 2;
+}
+
+// Wird von dem Client zum Server geschickt, um eine Nachricht zu bearbeiten.
+message UpdateCallBack {
+    required int32 callback_id          = 1;
+    optional CallBackStatus status      = 2;
+    optional bool archiv                = 3;       	// Kann vom Server gesendet werden um den CallBack zu archivieren.
+    // Wenn dieses Flag auf True steht, soll er aus dem Client gelöscht werden. (Ab Client 3.1.8.4)
+
+    optional string memo				= 4;					//Notiz
+    optional string caller_number		= 5;
+    optional string callback_number		= 6;
+    optional string date_time_planned	= 7;
+}
+
+message CreateCallBack {
+    optional string agent				= 1;					//AuftragBearbeiter
+
+    optional string memo				= 2;					//Notiz
+    optional string caller_number		= 3;
+    optional string callback_number		= 4;
+    optional string date_time_planned	= 5;
+}
+
+message GetAgentList {
+    optional bool flag = 1;
+}
+
+message AgentInfo {
+    required string agent			= 1;
+    optional string agent_full_name = 2;
+}
+
+message StartCallBack {
+    required int32 callback_id      = 1;
+    optional string tel_number		= 2;
+}
+
+message ShowCallBackSuccessQuestion {
+    required int32 callback_id = 1;
+}

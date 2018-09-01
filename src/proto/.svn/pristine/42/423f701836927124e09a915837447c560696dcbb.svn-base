@@ -1,0 +1,52 @@
+// $Id$
+
+// AppAddressResolution
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "AddressResolutionProto";
+
+import "CATS_Helper.proto";
+
+message AddressResolution {
+    required int32 actionCommand = 1;
+
+    optional ResolveNumber	resolve_number  = 2;							//Bring Nummerdarstelung zur Internationalen Format un dan macht suche
+    optional ResolveResult	resolve_result  = 3;
+    optional FindTelNumber  find_telnumber  = 4;
+    optional ResultFindTelNumber result_find_telnumber = 5;
+    optional ResolveEmail   resolve_email   = 6;
+    optional DataScript create_script       = 7;
+    optional ResolveNumber	resolve_number2 = 8;							//macht keine Prüfung von Nummerdarstelung und sucht sofort im Datenbank Nummer
+    optional ResolveResult	resolve_result2 = 9;
+}
+
+message ResolveNumber {
+    optional string tel_number  = 1;
+    optional string customer_id = 2;
+    optional string vnst = 3;
+    optional string filter = 4;
+}
+
+message ResolveResult {
+    optional CATSDataSet data_set = 1;
+}
+
+message FindTelNumber {
+    required CATSDataSet search_fields = 1;
+    repeated int32 result_fields = 2;
+    optional bool useORSearch = 3;
+    optional int32 sorted_by = 4;
+    optional int32 count = 5;							//wenn Feld exestiert, begrenze die Anzahl des DatenSätze bis auf count.
+}
+
+message ResultFindTelNumber {
+    repeated CATSDataSet result_data_set = 1;
+}
+
+message ResolveEmail {
+    required string email = 1;
+}
+

@@ -1,4 +1,4 @@
-// $Id: CATS_Specials.proto 8875 2016-09-14 07:59:48Z kai $
+// $Id: CATS_Specials.proto 9540 2017-10-24 10:30:54Z kai $
 
 // AppSpecials
 
@@ -60,6 +60,7 @@ message SpecialResult {
         BadParams                  = 8;
         DialBreakRedirectQuest     = 9; // Nummer zum wählen steht im Result-String, erneut wählen mit gesetztem break_forwarding-Flag
         DialBreakRedirectForbidden = 10; // Durchbrechen nicht erlaubt
+        DialWindowNotRecognized    = 11;
     }
 
     optional int32          special_command = 1;

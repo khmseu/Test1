@@ -1,0 +1,68 @@
+// $Id$
+
+// AppODBC
+
+syntax = "proto2";
+
+option optimize_for = CODE_SIZE;
+option java_package = "com.spuentrup.cats3.proto";
+//option java_outer_classname = "SqlProto";
+
+package RemoteSQL;
+
+message SQLop {
+    required int32           sql_command      = 1;
+    optional ConnectArgument connect_argument = 2;
+    optional ConnectResult   connect_result   = 3;
+    optional ExecuteArgument execute_argument = 4;
+    optional ExecuteResult   execute_result   = 5;
+    optional CloseArgument	 close_argument	  = 6;
+    optional CloseResult	 close_result	  = 7;
+};
+
+// open an ODBC connection
+message ConnectArgument {
+    required string dsn = 1; // ODBC DSN
+};
+
+message ConnectResult {
+    required int32 conn = 1; // ODBC connection id
+};
+
+// talk to the database
+message ExecuteArgument {
+    required int32 conn = 1; // ODBC connection id
+    required string cmd = 2; // SQL command
+};
+
+message ExecuteResult {
+    optional Data data = 1; // returned data
+};
+
+// close the connection
+message CloseArgument {
+    required int32 conn = 1; // ODBC connection id
+};
+
+message CloseResult {
+};
+
+//------------------------------
+
+message Data {
+    repeated Header head = 1; // describes the columns
+    repeated RowDB  rows = 2; // actual data
+};
+
+message Header {
+    required string name = 1; // column name
+    required string type = 2; // column type, format "%s %d %d %s" (ODBC sql type identifier, col size, dec digits, nullable)
+};
+
+message RowDB {
+    repeated ValueDB val = 1; // value
+};
+
+message ValueDB {
+    optional string str = 1; // data (in ODBC SQL_C_CHAR format), missing where NULL
+};

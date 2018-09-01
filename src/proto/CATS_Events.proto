@@ -1,4 +1,4 @@
-// $Id: CATS_Events.proto 8875 2016-09-14 07:59:48Z kai $
+// $Id: CATS_Events.proto 9617 2017-11-20 08:55:28Z kai $
 
 // AppPBX
 
@@ -63,6 +63,7 @@ message Event {
     optional Support.Device          associatedCalledDevice  = 40;
     optional Support.Device          associatedCallingDevice = 41;
     repeated Support.Device          associated              = 42;
+    repeated OriginatorClass         originator              = 43;
 };
 
 // Enum-Werte können sich noch ändern!
@@ -288,6 +289,12 @@ enum CallState {
     cs_Established = 6; // [connect,hold,queued]-[connect,hold,queued]
     cs_Failed      = 7; // failed-[^null]
     cs_Blocked     = 8; // failed-null
+};
+
+enum OriginatorClass {
+    oc_Unknown = 0;
+    oc_Caller = 1;
+    oc_Called = 2;
 };
 
 // PBXManager (internal messages used by AppScriptHost)

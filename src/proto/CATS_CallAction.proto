@@ -1,4 +1,4 @@
-// $Id: CATS_CallAction.proto 8875 2016-09-14 07:59:48Z kai $
+// $Id: CATS_CallAction.proto 10093 2018-08-08 08:38:09Z daniel $
 
 // AppCallActions
 
@@ -86,6 +86,7 @@ message ShowFirstScreen {
 message GetDataToWindow {
     required string caller_number = 1; // Dämliche required-Felder.
     optional string customer_id   = 2;
+    optional string adr_id = 3;
 }
 
 message GetShareScreen {
@@ -95,6 +96,7 @@ message GetShareScreen {
     optional string date_time_start   = 2;
     optional string date_time_end     = 3;
     optional string date_time_entered = 4;
+    optional string adr_id = 6;
 }
 
 
