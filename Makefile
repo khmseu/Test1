@@ -12,25 +12,34 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-PBGEN = ~/bin/protoc-gen-crystal
-PBGEN_SRC = lib/protobuf/bin/protoc-gen-crystal.cr
+#PBGEN = ~/bin/protoc-gen-crystal
+#PBGEN_SRC = lib/protobuf/bin/protoc-gen-crystal.cr
+
+PBGEN_SRC_DIR = ../protobuf.cr
+PBGEN = $(PBGEN_SRC_DIR)/protoc-gen-crystal
+PBGEN_SRC = $(PBGEN_SRC_DIR)/bin/protoc-gen-crystal.cr
+PBGEN_MORE_SRC = $(PBGEN_SRC_DIR)/src/protobuf/*.cr
 
 all: Test1
 
-Test1: src/Test1.cr src/tester.pb.cr
-	crystal build src/Test1.cr
+Test1: src/Test1.cr src/pb/CATS_MasterMUX.pb.cr src/pb/CATS_Master.pb.cr src/pb/CATS_MasterClient.pb.cr
+	crystal build --error-trace src/Test1.cr
 
 LIBS:
 	shards install
 
-src/tester.pb.cr: LIBS src/tester.proto
-	protoc -I src --crystal_out src src/tester.proto
+src/pb/%.pb.cr: src/proto/%.proto $(PBGEN) src/pb $(PBGEN)
+	PATH="$(dir $(PBGEN)):$$PATH" protoc -I $(<D) --crystal_out $(@D) $<
 
-src/pb/%.pb.cr: src/proto/%.proto $(PBGEN)
-	protoc -I $(<D) --crystal_out $(@D) $<
+src/pb/%.pb.bin: src/proto/%.proto $(PBGEN) src/pb $(PBGEN)
+	PATH="$(dir $(PBGEN)):$$PATH" protoc -I $(<D) --descriptor_set_out=$@ --dependency_out=$(<F).deps $<
 
-$(PBGEN): $(PBGEN_SRC)
+$(PBGEN): $(PBGEN_SRC) $(PBGEN_MORE_SRC)
 	crystal build $< -o $@
 
 $(PBGEN_SRC):
 	shards install
+
+src/pb:
+	mkdir $@
+
