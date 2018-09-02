@@ -1,6 +1,6 @@
 require "./Test1/*"
 require "protobuf"
-require "./pb/CATS_MasterMUX.pb"
+require "./pb-MUX/CATS_MasterMUX.pb"
 
 # TODO: Write documentation for `Test1`
 module Test1
@@ -9,3 +9,6 @@ module Test1
     include Protobuf::Message
   end
 end
+
+
+msg = C3T.new
